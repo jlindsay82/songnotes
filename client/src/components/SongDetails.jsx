@@ -17,7 +17,6 @@ const SongDetails = ({ song }) => {
     if (!user) {
       return;
     }
-    //console.log(`Song ${song.title} was selected`);
     const response = await fetch(URL + "/api/songs/" + song._id, {
       method: "GET",
       headers: {

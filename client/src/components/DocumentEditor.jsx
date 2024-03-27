@@ -15,7 +15,7 @@ const DocumentEditor = () => {
 
   //set content initially via useEffect
   useEffect(() => {
-    if (user) {
+    if (user && JSON.parse(localStorage.getItem("openDocument"))) {
       setEditorValue(JSON.parse(localStorage.getItem("openDocument")).content);
     }
   }, []);
@@ -24,37 +24,39 @@ const DocumentEditor = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const { title } = JSON.parse(localStorage.getItem("openDocument"));
-    const content = editorValue;
-    const { _id: song_id } = JSON.parse(localStorage.getItem("openSong"));
-    const { _id: document_id } = JSON.parse(
-      localStorage.getItem("openDocument")
-    );
-    const document = { title, content, song_id };
-    console.log(content);
+    if (JSON.parse(localStorage.getItem("openDocument"))) {
+      const { title } = JSON.parse(localStorage.getItem("openDocument"));
+      const content = editorValue;
+      const { _id: song_id } = JSON.parse(localStorage.getItem("openSong"));
+      const { _id: document_id } = JSON.parse(
+        localStorage.getItem("openDocument")
+      );
+      const document = { title, content, song_id };
 
-    const response = await fetch(
-      URL + "/api/documents/document/" + document_id,
-      {
-        method: "PATCH",
-        body: JSON.stringify(document),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
+      const response = await fetch(
+        URL + "/api/documents/document/" + document_id,
+        {
+          method: "PATCH",
+          body: JSON.stringify(document),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        setError(json.error);
       }
-    );
-
-    const json = await response.json();
-
-    if (!response.ok) {
-      setError(json.error);
-    }
-    if (response.ok) {
-      console.log("document updated:", json);
-      //dispatch({ type: "UPDATE_DOCUMENT", payload: json }); //update context to see updated documents in DocumentDetails component
+      if (response.ok) {
+        console.log("document updated:", json);
+        //dispatch({ type: "UPDATE_DOCUMENT", payload: json }); //update context to see updated documents in DocumentDetails component
+      }
     }
   };
+
   return (
     <>
       <h4>SongSpace</h4>
