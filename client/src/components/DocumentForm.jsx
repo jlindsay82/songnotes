@@ -9,8 +9,8 @@ const DocumentForm = () => {
   const { user } = useAuthContext();
   const URL = config.url;
   let song_id = null;
-  if (JSON.parse(localStorage.getItem("openSong"))) {
-    song_id = JSON.parse(localStorage.getItem("openSong"))._id;
+  if (JSON.parse(sessionStorage.getItem("openSong"))) {
+    song_id = JSON.parse(sessionStorage.getItem("openSong"))._id;
   }
 
   const content = "";

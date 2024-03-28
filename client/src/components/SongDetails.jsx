@@ -27,7 +27,7 @@ const SongDetails = ({ song }) => {
 
     if (response.ok) {
       console.log("song selected:", json);
-      localStorage.setItem("openSong", JSON.stringify(json)); //set selected song as current open song
+      sessionStorage.setItem("openSong", JSON.stringify(json)); //set selected song as current open song
 
       const fetchDocument = async () => {
         const response = await fetch(URL + "/api/documents/user/" + song._id, {

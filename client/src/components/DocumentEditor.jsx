@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
-import { useDocumentsContext } from "../hooks/useDocumentsContext";
+//import { useDocumentsContext } from "../hooks/useDocumentsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { EditorContext } from "../context/EditorContext";
 import { useContext } from "react";
@@ -9,27 +9,29 @@ import { config } from "../constants";
 
 const DocumentEditor = () => {
   const [editorValue, setEditorValue] = useState("");
-  const { dispatch } = useDocumentsContext();
+  //const { dispatch } = useDocumentsContext();
   const { user } = useAuthContext();
-  //const { documentContent, dispatch: editorDispatch } = useContext(EditorContext);
+  const { documentContent } = useContext(EditorContext);
 
   //set content initially via useEffect
   useEffect(() => {
-    if (user && JSON.parse(localStorage.getItem("openDocument"))) {
-      setEditorValue(JSON.parse(localStorage.getItem("openDocument")).content);
+    if (user && JSON.parse(sessionStorage.getItem("openDocument"))) {
+      setEditorValue(
+        JSON.parse(sessionStorage.getItem("openDocument")).content
+      );
     }
-  }, []);
+  }, [documentContent]);
 
   const URL = config.url;
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (JSON.parse(localStorage.getItem("openDocument"))) {
-      const { title } = JSON.parse(localStorage.getItem("openDocument"));
+    if (JSON.parse(sessionStorage.getItem("openDocument"))) {
+      const { title } = JSON.parse(sessionStorage.getItem("openDocument"));
       const content = editorValue;
-      const { _id: song_id } = JSON.parse(localStorage.getItem("openSong"));
+      const { _id: song_id } = JSON.parse(sessionStorage.getItem("openSong"));
       const { _id: document_id } = JSON.parse(
-        localStorage.getItem("openDocument")
+        sessionStorage.getItem("openDocument")
       );
       const document = { title, content, song_id };
 

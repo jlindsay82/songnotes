@@ -10,8 +10,8 @@ const DocumentExplorer = () => {
   const { user } = useAuthContext(); // get current authorised user
   const URL = config.url; //dynamic URL path for dev and prod environment
   let song_id = null;
-  if (JSON.parse(localStorage.getItem("openSong"))) {
-    song_id = JSON.parse(localStorage.getItem("openSong"))._id; //get current open song
+  if (JSON.parse(sessionStorage.getItem("openSong"))) {
+    song_id = JSON.parse(sessionStorage.getItem("openSong"))._id; //get current open song
   }
   let fetchDocuments = null;
   //fetch all songs for current user's open song via useEffect

@@ -51,7 +51,7 @@ const SongForm = () => {
       setError(null);
       console.log("new song added:", json);
       dispatch({ type: "CREATE_SONG", payload: json }); //update context to see new song in songDetails component
-      localStorage.setItem("openSong", JSON.stringify(json)); //set new song song to current open song
+      sessionStorage.setItem("openSong", JSON.stringify(json)); //set new song song to current open song
     }
   };
 

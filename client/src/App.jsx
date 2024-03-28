@@ -10,7 +10,6 @@ import Navbar from "./components/Navbar";
 function App() {
   const { user } = useAuthContext();
   if (user) {
-    //console.log("printing out user from app: " + JSON.stringify(user));
   }
   return (
     <>
