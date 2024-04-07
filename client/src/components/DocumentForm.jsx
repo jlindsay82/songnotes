@@ -8,11 +8,7 @@ const DocumentForm = () => {
   const { dispatch } = useDocumentsContext();
   const { user } = useAuthContext();
   const URL = config.url;
-  let song_id = null;
-  if (JSON.parse(sessionStorage.getItem("openSong"))) {
-    song_id = JSON.parse(sessionStorage.getItem("openSong"))._id;
-  }
-
+  const { _id: song_id } = JSON.parse(localStorage.getItem("openSong"));
   const content = "";
 
   const [title, setTitle] = useState("");

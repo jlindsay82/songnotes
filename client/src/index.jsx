@@ -1,21 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import App from "./App.jsx";
 import "./index.css";
-import { AuthContextProvider } from "./context/AuthContext";
 import { SongsContextProvider } from "./context/SongsContext";
-import { DocumentsContextProvider } from "./context/DocumentsContext";
-import { EditorContextProvider } from "./context/EditorContext";
+import { AuthContextProvider } from "./context/AuthContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthContextProvider>
       <SongsContextProvider>
-        <DocumentsContextProvider>
-          <EditorContextProvider>
-            <App />
-          </EditorContextProvider>
-        </DocumentsContextProvider>
+        <App />
       </SongsContextProvider>
     </AuthContextProvider>
   </React.StrictMode>

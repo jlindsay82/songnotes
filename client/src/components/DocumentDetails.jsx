@@ -10,7 +10,8 @@ import FileOpenIcon from "@mui/icons-material/FileOpen";
 const DocumentDetails = ({ document }) => {
   const { dispatch } = useDocumentsContext();
   const { user } = useAuthContext();
-  const { dispatch: editorDispatch } = useContext(EditorContext);
+  const { documentContent, dispatch: editorDispatch } =
+    useContext(EditorContext);
 
   const URL = config.url;
 
@@ -32,8 +33,8 @@ const DocumentDetails = ({ document }) => {
 
     if (response.ok) {
       console.log("document selected:", json);
-      sessionStorage.setItem("openDocument", JSON.stringify(json)); //set selected document as current open document
-      editorDispatch({ type: "SET_EDITOR", payload: json.content });
+      localStorage.setItem("openDocument", JSON.stringify(json)); //set selected document as current open document
+      //editorDispatch({ type: "SET_EDITOR", payload: json });
     }
   };
 
@@ -56,11 +57,6 @@ const DocumentDetails = ({ document }) => {
     if (response.ok) {
       dispatch({ type: "DELETE_DOCUMENT", payload: json });
       console.log("document deleted:", json);
-      //if deleted document is the open document, then this should be cleared from local storage
-      if (JSON.parse(sessionStorage.getItem("openDocument"))._id === json._id) {
-        console.log("deleted doc is same id as openDocument");
-        sessionStorage.removeItem("openDocument");
-      }
     }
   };
 

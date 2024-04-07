@@ -9,15 +9,17 @@ import Navbar from "./components/Navbar";
 
 function App() {
   const { user } = useAuthContext();
-  if (user) {
-  }
+
   return (
     <>
       <BrowserRouter>
         <Navbar />
         <div className="pages container">
           <Routes>
-            <Route path="/" element={user ? <Home /> : <Login />} />
+            <Route
+              path="/"
+              element={user ? <Home /> : <Navigate to="/login" />}
+            />
             <Route
               path="/login"
               element={!user ? <Login /> : <Navigate to="/" />}

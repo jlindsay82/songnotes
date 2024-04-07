@@ -1,5 +1,4 @@
 require("dotenv").config();
-const path = require("path");
 
 const cors = require("cors");
 const express = require("express");
@@ -14,7 +13,6 @@ const app = express();
 //middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join("public")));
 
 app.use((req, res, next) => {
   console.log(req.path, req.method);
@@ -25,11 +23,6 @@ app.use((req, res, next) => {
 app.use("/api/documents", documentRoutes);
 app.use("/api/songs", songRoutes);
 app.use("/api/user", userRoutes);
-
-//serve front-end
-app.use((req, res, next) => {
-  res.sendFile(path.resolve(__dirname, "public", "index.html"));
-});
 
 //connect to DB
 mongoose
