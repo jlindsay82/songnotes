@@ -16,7 +16,7 @@ body {
   font-family: "Poppins";
   width: 100vw;
   max-width: 1400px;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,14 +24,19 @@ body {
   background-color: var(--secondary);
   color: var(--primary);
 }
+
 header {
-  background: #fff;
+  background: var(--primary);
+  color: var(--secondary) !important;
   width: 100%;
+}
+header h1 {
+  color: var(--secondary);
 }
 header .container {
   width: 100%;
   margin: 0;
-  padding: 0px 10px;
+  padding: 0px 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -45,11 +50,16 @@ header a {
 }
 .pages .container {
   max-width: 100%;
-  max-height: 100vh;
+  max-height: 99vh;
   margin: 0;
   padding: 10px;
   display: flex;
   align-items: flex-start;
+}
+
+/*Text sizes*/
+.smaller {
+  font-size: smaller;
 }
 
 /* homepage */
@@ -63,6 +73,7 @@ header a {
 
 .explorer {
   min-width: 300px;
+  height: 100%;
 }
 .explorer-item {
   background: #fff;
@@ -97,6 +108,7 @@ header a {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 30%;
   max-height: 300px;
   border-left: 2px solid white;
   padding: 5px;
@@ -117,7 +129,7 @@ header a {
 .song-space {
   min-height: 400px;
   max-height: 100%;
-  margin: 10px;
+  margin: 5px;
 }
 
 /* new song form */
@@ -143,9 +155,14 @@ button {
   border-radius: 4px;
   cursor: pointer;
 }
+
+.save-button {
+  background: #ffc300;
+}
+
 form {
   background: #fff;
-  padding: 5px;
+  padding: 15px;
   max-width: 100%;
   max-height: 100%;
 }
@@ -226,7 +243,7 @@ form.login {
   visibility: visible;
 }
 
-.exit-button {
+.action-button {
   cursor: pointer;
 }
 
@@ -247,4 +264,47 @@ form.login {
 
 .right-align {
   margin-left: auto;
+}
+
+/*SongSpace*/
+.editor-container {
+  height: 50vh;
+}
+
+.ql-container.ql-snow {
+  height: auto;
+}
+.ql-editor {
+  height: 500px;
+  overflow-y: scroll;
+}
+
+audioRecorder-container {
+  height: 30vh;
+}
+
+/*Recorder*/
+.audio-controls-container {
+  display: flex;
+  align-items: center;
+  border: solid 1px white;
+  border-radius: 5px;
+  background-color: #f1f3f4;
+  padding: 5px;
+}
+
+#stopRecording,
+#startRecording {
+  margin-top: 6px;
+  cursor: pointer;
+}
+#startRecording {
+  color: red;
+}
+#stopRecording {
+  color: black;
+}
+
+#audio-control {
+  background-color: white;
 }

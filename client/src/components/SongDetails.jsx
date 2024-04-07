@@ -1,6 +1,7 @@
 import { useSongsContext } from "../hooks/useSongsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useDocumentsContext } from "../hooks/useDocumentsContext";
+import { useRecordingsContext } from "../hooks/useRecordingsContext";
 import { config } from "../constants";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -10,6 +11,7 @@ const SongDetails = ({ song }) => {
   const { dispatch: songsDispatch } = useSongsContext();
   const { dispatch: documentsDispatch } = useDocumentsContext();
   const { user } = useAuthContext();
+  const { dispatch: recordingsDispatch } = useRecordingsContext();
 
   const URL = config.url;
 
@@ -17,7 +19,6 @@ const SongDetails = ({ song }) => {
     if (!user) {
       return;
     }
-    //console.log(`Song ${song.title} was selected`);
     const response = await fetch(URL + "/api/songs/" + song._id, {
       method: "GET",
       headers: {
@@ -28,9 +29,9 @@ const SongDetails = ({ song }) => {
 
     if (response.ok) {
       console.log("song selected:", json);
-      localStorage.setItem("openSong", JSON.stringify(json)); //set selected song as current open song
+      sessionStorage.setItem("openSong", JSON.stringify(json)); //set selected song as current open song
 
-      const fetchDocument = async () => {
+      const fetchDocuments = async () => {
         const response = await fetch(URL + "/api/documents/user/" + song._id, {
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -43,8 +44,25 @@ const SongDetails = ({ song }) => {
           documentsDispatch({ type: "SET_DOCUMENTS", payload: documentsJson }); //dispatch will trigger songsReducer passing in the action type. This updates the state with the payload of json data from the fetch
         }
       };
+      const fetchRecordings = async () => {
+        const response = await fetch(URL + "/api/recordings/user/" + song._id, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        const recordingsJson = await response.json();
+
+        if (response.ok) {
+          console.log(recordingsJson);
+          recordingsDispatch({
+            type: "SET_RECORDINGS",
+            payload: recordingsJson,
+          }); //dispatch will trigger songsReducer passing in the action type. This updates the state with the payload of json data from the fetch
+        }
+      };
       if (user) {
-        fetchDocument();
+        fetchDocuments();
+        fetchRecordings();
       }
     }
   };

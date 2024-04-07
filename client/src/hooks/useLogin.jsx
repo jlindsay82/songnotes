@@ -25,9 +25,9 @@ export const useLogin = () => {
       setError(json.error);
     }
     if (response.ok) {
-      // save the user to local storage
-      localStorage.setItem("user", JSON.stringify(json));
-
+      // save the user to session storage
+      sessionStorage.setItem("user", JSON.stringify(json));
+      console.log("Loggin the login response: " + JSON.stringify(json));
       //update the AuthContext
       dispatch({ type: "LOGIN", payload: json });
 

@@ -51,7 +51,7 @@ const SongForm = () => {
       setError(null);
       console.log("new song added:", json);
       dispatch({ type: "CREATE_SONG", payload: json }); //update context to see new song in songDetails component
-      localStorage.setItem("openSong", JSON.stringify(json)); //set new song song to current open song
+      sessionStorage.setItem("openSong", JSON.stringify(json)); //set new song song to current open song
     }
   };
 
@@ -66,7 +66,7 @@ const SongForm = () => {
         <form className="modal" onSubmit={handleSubmit}>
           <h4>
             Create a New song
-            <span className="exit-button" onClick={toggleModal}>
+            <span className="action-button" onClick={toggleModal}>
               <sup>&nbsp; X</sup>
             </span>
           </h4>

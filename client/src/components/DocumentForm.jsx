@@ -8,7 +8,11 @@ const DocumentForm = () => {
   const { dispatch } = useDocumentsContext();
   const { user } = useAuthContext();
   const URL = config.url;
-  const { _id: song_id } = JSON.parse(localStorage.getItem("openSong"));
+  let song_id = null;
+  if (JSON.parse(sessionStorage.getItem("openSong"))) {
+    song_id = JSON.parse(sessionStorage.getItem("openSong"))._id;
+  }
+
   const content = "";
 
   const [title, setTitle] = useState("");
@@ -61,7 +65,7 @@ const DocumentForm = () => {
         <form className="create modal" onSubmit={handleSubmit}>
           <h4>
             Create a New Document
-            <span className="exit-button" onClick={toggleModal}>
+            <span className="action-button" onClick={toggleModal}>
               <sup>&nbsp; X</sup>
             </span>
           </h4>
