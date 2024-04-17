@@ -49,14 +49,14 @@ jobs:
           name: node-app
       
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1625E16DAD92493FAAD192946538C5B4 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9DC08A101F39404D9B680D8657498D1A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0D933A65EFF84378A5E219B7AACEA8EF }}
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'songnotes-app'
