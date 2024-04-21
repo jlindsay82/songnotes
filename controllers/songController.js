@@ -71,7 +71,9 @@ const updatesong = async (req, res) => {
       ...req.body, //spread out body data as second parameter to update with values passed
     }
   );
-  res.status(200).json(song);
+  const response = await Song.findById(id);
+  res.status(200).json(response);
+  //console.log(response);
 };
 
 module.exports = {

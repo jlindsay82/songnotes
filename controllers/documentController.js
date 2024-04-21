@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 // get all documents
 const getDocuments = async (req, res) => {
   const { song_id } = req.params;
-  const documents = await Document.find({ song_id }).sort({ createdAt: -1 }); // sort descending filtered by user
+  const documents = await Document.find({ song_id }).sort({ createdAt: -1 }); // sort descending filtered by song_id
   res.status(200).json(documents);
 };
 
@@ -21,7 +21,7 @@ const getDocument = async (req, res) => {
     return res.status(404).json({ error: "No such document" }); //use return statement to stop method
   }
   res.status(200).json(document);
-  console.log(document);
+  //console.log(document);
 };
 
 // create new document
@@ -76,7 +76,7 @@ const updateDocument = async (req, res) => {
     }
   );
   res.status(200).json(await Document.findById(document_id));
-  console.log(await Document.findById(document_id));
+  //console.log(await Document.findById(document_id));
 };
 
 module.exports = {

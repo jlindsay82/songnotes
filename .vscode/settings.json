@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/1dc4018e-2bf8-4ddf-8980-485676215317/resourceGroups/Songnotes/providers/Microsoft.Web/sites/songnotes-app",
+  "appService.deploySubpath": "."
+}
