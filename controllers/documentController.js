@@ -6,6 +6,10 @@ const getDocuments = async (req, res) => {
   const { song_id } = req.params;
   const documents = await Document.find({ song_id }).sort({ createdAt: -1 }); // sort descending filtered by song_id
   res.status(200).json(documents);
+  
+  documents.forEach(function (document) {
+    console.log("get document: ",document._id, document.title);
+  })
 };
 
 // get a single document
@@ -21,7 +25,7 @@ const getDocument = async (req, res) => {
     return res.status(404).json({ error: "No such document" }); //use return statement to stop method
   }
   res.status(200).json(document);
-  //console.log(document);
+  console.log("get document: ", document._id, document.title);
 };
 
 // create new document
@@ -37,6 +41,7 @@ const createDocument = async (req, res) => {
       song_id,
     });
     res.status(200).json(document);
+    console.log("create document: ", document._id, document.title);
   } catch (error) {
     res.status(400).json({ error: error.message });
     console.log(error);
@@ -58,6 +63,7 @@ const deleteDocument = async (req, res) => {
   }
 
   res.status(200).json(document);
+  console.log("deleted document: ", document._id, document.title);
 };
 
 //update a document
@@ -76,7 +82,8 @@ const updateDocument = async (req, res) => {
     }
   );
   res.status(200).json(await Document.findById(document_id));
-  //console.log(await Document.findById(document_id));
+  const deletedDocument = await Document.findById(document_id);
+  console.log("document updated: ", deletedDocument._id, deletedDocument.title);
 };
 
 module.exports = {

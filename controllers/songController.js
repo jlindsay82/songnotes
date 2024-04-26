@@ -6,6 +6,10 @@ const getsongs = async (req, res) => {
   const user_id = req.user._id;
   const songs = await Song.find({ user_id }).sort({ createdAt: -1 }); // sort descending filtered by user
   res.status(200).json(songs);
+    //server log data retrieved
+    songs.forEach(function (song) {
+      console.log("get song: ", song._id, song.title);
+    })
 };
 
 // get a single song
@@ -21,6 +25,7 @@ const getsong = async (req, res) => {
     return res.status(404).json({ error: "No such song" }); //use return statement to stop method
   }
   res.status(200).json(song);
+  console.log("get song: ", song._id,song.title);
 };
 
 // create new song
@@ -32,6 +37,7 @@ const createsong = async (req, res) => {
     const user_id = req.user._id;
     const song = await Song.create({ title, genre, key, tempo, user_id });
     res.status(200).json(song);
+    console.log("created song: ",song._id,song.title);
   } catch (error) {
     res.status(400).json({ error: error.message });
     console.log(error);
@@ -54,6 +60,7 @@ const deletesong = async (req, res) => {
   }
 
   res.status(200).json(song);
+  console.log("deleted song: ",song._id,song.title);
 };
 
 //update a song
@@ -73,7 +80,7 @@ const updatesong = async (req, res) => {
   );
   const response = await Song.findById(id);
   res.status(200).json(response);
-  //console.log(response);
+  console.log("updated song: ",response._id, response.title);
 };
 
 module.exports = {
