@@ -26,9 +26,9 @@ const DocumentExplorer = () => {
         const json = await response.json();
 
         if (response.ok) {
-          //setDocuments(json);
           console.log(json);
-          dispatch({ type: "SET_DOCUMENTS", payload: json }); //dispatch will trigger songsReducer passing in the action type. This updates the state with the payload of json data from the fetch
+          dispatch({ type: "SET_DOCUMENTS", payload: json }); //dispatch will trigger songsReducer passing in the action type. 
+          //This dispatch updates the state with the payload of json data from the fetch
         }
       };
     }

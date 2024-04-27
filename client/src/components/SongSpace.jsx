@@ -1,15 +1,21 @@
 import { useState, useEffect } from "react";
 import DocumentEditor from "./DocumentEditor";
 import AudioRecorder from "../components/AudioRecorder";
+import { OpenSongContext } from "../context/OpenSongContext";
+import { useContext } from "react";
 
 const SongSpace = () => {
   const [openSongTitle, setOpenSongTitle] = useState("");
 
+  //set variables
+  const { openSong } = useContext(OpenSongContext);
+
   useEffect(() => {
-    if (JSON.parse(sessionStorage.getItem("openSong"))) {
-      setOpenSongTitle(JSON.parse(sessionStorage.getItem("openSong")).title);
+    //console.log(openSong);
+    if (openSong) {
+      setOpenSongTitle(openSong.title);
     }
-  }, [openSongTitle]);
+  }, [openSong]);
 
   return (
     <div className="song-space">

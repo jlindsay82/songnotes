@@ -1,19 +1,24 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useSongsContext } from "../hooks/useSongsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+
 import { config } from "../constants";
 
-const SongForm = () => {
-  const [display, setDisplay] = useState(false);
-  const { dispatch } = useSongsContext();
+const SongUpdateForm = ({song}) => {
+  //set state variables
+  const [display, setDisplay] = useState(true);
+
+  //set contexts
+  const { dispatch:songsDispatch } = useSongsContext();
   const { user } = useAuthContext();
 
+  //set variables
   const URL = config.url;
 
-  const [title, setTitle] = useState("");
-  const [genre, setGenre] = useState("");
-  const [key, setKey] = useState("");
-  const [tempo, setTempo] = useState("");
+  const [title, setTitle] = useState(song.title);
+  const [genre, setGenre] = useState(song.genre);
+  const [key, setKey] = useState(song.key);
+  const [tempo, setTempo] = useState(song.tempo);
   const [error, setError] = useState(null);
 
   const toggleModal = () => {
@@ -27,45 +32,30 @@ const SongForm = () => {
       return;
     }
 
-    const song = { title, genre, key, tempo };
+    const songPayload = { title, genre, key, tempo };
 
-    const response = await fetch(URL + "/api/songs", {
-      method: "POST",
-      body: JSON.stringify(song),
+    const response = await fetch(URL + "/api/songs/" + song._id, {
+      method: "PATCH",
+      body: JSON.stringify(songPayload),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.token}`,
       },
     });
-
     const json = await response.json();
 
-    if (!response.ok) {
-      setError(json.error);
-    }
     if (response.ok) {
-      setTitle("");
-      setGenre("");
-      setKey("");
-      setTempo("");
-      setError(null);
-      console.log("new song added:", json);
-      dispatch({ type: "CREATE_SONG", payload: json }); //update context to see new song in songDetails component
-      sessionStorage.setItem("openSong", JSON.stringify(json)); //set new song song to current open song
+      songsDispatch({ type: "UPDATE_SONG", payload: json });
+      console.log("song updated:", json);
     }
   };
 
   return (
     <>
-      {!display && (
-        <button onClick={toggleModal}>
-          New Song <strong>+</strong>
-        </button>
-      )}
-      {display && (
-        <form className="modal" onSubmit={handleSubmit}>
+    {display &&
+        (<form className="modal" onSubmit={handleSubmit}>
           <h4>
-            Create a New song
+            Update song
             <span className="action-button closebtn" onClick={toggleModal}>
               <p>X</p>
             </span>
@@ -98,12 +88,11 @@ const SongForm = () => {
             value={tempo}
           />
 
-          <button>Create Song</button>
+          <button>Update Song</button>
           {error && <div className="error">{error}</div>}
-        </form>
-      )}
+        </form>)}
     </>
   );
 };
 
-export default SongForm;
+export default SongUpdateForm;

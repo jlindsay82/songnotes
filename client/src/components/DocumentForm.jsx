@@ -1,25 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useDocumentsContext } from "../hooks/useDocumentsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { OpenSongContext } from "../context/OpenSongContext";
 import { config } from "../constants";
 
 const DocumentForm = () => {
+  //ste state
   const [display, setDisplay] = useState(false);
-  const { dispatch } = useDocumentsContext();
-  const { user } = useAuthContext();
-  const URL = config.url;
-  let song_id = null;
-  if (JSON.parse(sessionStorage.getItem("openSong"))) {
-    song_id = JSON.parse(sessionStorage.getItem("openSong"))._id;
-  }
-
-  const content = "";
-
+  const [song_id, setSongId] = useState("");
   const [title, setTitle] = useState("");
   const [error, setError] = useState(null);
 
+  //set contexts
+  const { dispatch } = useDocumentsContext();
+  const { user } = useAuthContext();
+  const { openSong } = useContext(OpenSongContext);
+
+  //set variables
+  const URL = config.url;
+
+  useEffect(() => {
+    //console.log(openSong);
+    if (openSong) {
+      setSongId(openSong._id);
+      setError(null);
+      //console.log(song_id);
+    }
+  }, [openSong]);
+
+  const content = "";
+
   const toggleModal = () => {
     setDisplay(!display); // changes previous state to oppposite state
+    if (!song_id) {
+      setError("You must select a Song project before creating a new document");
+      if (song_id) {
+        setError(null);
+      }
+
+      return;
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -28,7 +48,6 @@ const DocumentForm = () => {
       setError("You must be logged in");
       return;
     }
-
     const document = { title, content, song_id };
 
     const response = await fetch(URL + "/api/documents/user/", {
@@ -63,12 +82,12 @@ const DocumentForm = () => {
 
       {display && (
         <form className="create modal" onSubmit={handleSubmit}>
-          <h4>
+          <h5>
             Create a New Document
-            <span className="action-button" onClick={toggleModal}>
-              <sup>&nbsp; X</sup>
+            <span className="action-button closebtn" onClick={toggleModal}>
+              <p>X</p>
             </span>
-          </h4>
+          </h5>
 
           <p>Document Title: </p>
           <input
@@ -77,7 +96,7 @@ const DocumentForm = () => {
             value={title}
           />
 
-          <button>Create Document</button>
+          <button disabled={!song_id}>Create Document</button>
           {error && <div className="error">{error}</div>}
         </form>
       )}

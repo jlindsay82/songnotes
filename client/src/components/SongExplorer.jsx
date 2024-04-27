@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import SongDetails from "../components/SongDetails";
 import { useSongsContext } from "../hooks/useSongsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { OpenSongContext } from "../context/OpenSongContext";
 import { config } from "../constants";
 import SongForm from "./SongForm";
 
 const SongExplorer = () => {
+  //set contexts
   const { songs, dispatch } = useSongsContext();
   const { user } = useAuthContext();
+  const { openSong } = useContext(OpenSongContext);
+
   const URL = config.url;
 
   //fetch all songs via useEffect

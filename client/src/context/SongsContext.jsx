@@ -19,10 +19,7 @@ export const songsReducer = (state, action) => {
       };
     case "UPDATE_SONG":
       return {
-        songs: [
-          action.payload,
-          state.songs.filter((song) => song._id !== action.payload._id),
-        ],
+        songs: [action.payload, ...state.songs.filter((song) => song._id !== action.payload._id)],
       };
     default:
       return state;

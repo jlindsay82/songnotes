@@ -22,7 +22,7 @@ const Navbar = () => {
         </Link>
         <nav>
           {user && (
-            <div>
+            <div className="flex-container">
               <span>{user.email}</span>
               <button onClick={handleClick}>Logout</button>
             </div>

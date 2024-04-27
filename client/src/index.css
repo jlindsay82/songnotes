@@ -1,5 +1,5 @@
 /* google font */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;700&family=VT323&display=swap");
 
 /* layout */
 :root {
@@ -14,30 +14,31 @@
 body {
   margin: 0;
   font-family: "Poppins";
-  width: 100vw;
-  max-width: 1400px;
-  height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: solid 1px white;
-  background-color: var(--secondary);
+
   color: var(--primary);
+}
+
+#root {
+  width: 100vw;
+  max-width: 1400px;
+  min-height: 99vh;
+  background-color: var(--secondary);
+  border-radius: 5px;
 }
 
 header {
   background: var(--primary);
   color: var(--secondary) !important;
-  width: 100%;
 }
-header h1 {
-  color: var(--secondary);
-}
+
 header .container {
-  width: 100%;
   margin: 0;
   padding: 0px 5px;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
@@ -45,14 +46,11 @@ header .container nav {
   padding: 0 20px;
 }
 header a {
-  color: #333;
+  color: white;
   text-decoration: none;
 }
 .pages .container {
-  max-width: 100%;
-  max-height: 99vh;
   margin: 0;
-  padding: 10px;
   display: flex;
   align-items: flex-start;
 }
@@ -67,14 +65,14 @@ header a {
   display: grid;
   grid-template-columns: 3fr 1fr;
   gap: 1px;
-  height: 100%;
-  width: 100%;
 }
 
 .explorer {
   min-width: 300px;
   height: 100%;
+  border-left: 2px solid white;
 }
+
 .explorer-item {
   background: #fff;
   border-radius: 5px;
@@ -85,6 +83,9 @@ header a {
 }
 
 .explorer-item:hover {
+  background: lightgray;
+}
+.explorer-item .selected {
   background: lightgray;
 }
 
@@ -108,9 +109,8 @@ header a {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 30%;
+  min-height: 50px;
   max-height: 300px;
-  border-left: 2px solid white;
   padding: 5px;
 }
 
@@ -124,11 +124,12 @@ header a {
   padding-left: 5px;
   border-radius: 5px;
   min-height: 40px;
+  margin: 2px;
 }
 
 .song-space {
   min-height: 400px;
-  max-height: 100%;
+  height: auto;
   margin: 5px;
 }
 
@@ -175,12 +176,12 @@ form h4 {
   margin: 10px 0px;
 }
 div.error {
-  padding: 10px;
+  padding: 5px;
   background: #ffefef;
   border: 1px solid var(--error);
   color: var(--error);
   border-radius: 4px;
-  margin: 20px 0;
+  margin: 5px 0;
 }
 
 /* navbar */
@@ -188,6 +189,7 @@ nav {
   display: flex;
   align-items: center;
 }
+
 nav a {
   margin-left: 10px;
 }
@@ -210,6 +212,7 @@ form.login {
   padding: 20px;
   background: #fff;
   border-radius: 4px;
+  border: solid 2px var(--primary);
 }
 
 /* Tooltip container */
@@ -253,10 +256,19 @@ form.login {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: solid 2px black;
+  border: solid 2px var(--primary);
   border-radius: 5px;
   color: var(--primary);
 }
+
+.closebtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 16px;
+  margin-left: 50px;
+}
+
 .flex-container {
   display: flex;
   align-items: center;
@@ -268,43 +280,87 @@ form.login {
 
 /*SongSpace*/
 .editor-container {
-  height: 50vh;
+  height: auto;
+  max-height: 65vh;
 }
 
 .ql-container.ql-snow {
   height: auto;
 }
 .ql-editor {
-  height: 500px;
+  height:500px;
   overflow-y: scroll;
 }
 
-audioRecorder-container {
-  height: 30vh;
+/*Recorder*/
+.audio-section-container {
+  height: 270px;
+  border-top: solid 2px white;
 }
 
-/*Recorder*/
-.audio-controls-container {
+.recorder-controls-container {
+  width: auto;
+  max-width:370px;
   display: flex;
   align-items: center;
-  border: solid 1px white;
+  gap: 10px;
+  border: solid 1px  var(--primary);
   border-radius: 5px;
   background-color: #f1f3f4;
-  padding: 5px;
+  padding: 12.5px 5px 12.5px 15px;
+
+}
+
+.audioplayer{
+  width: auto;
+  max-width:370px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: solid 1px  var(--primary);
+  border-radius: 5px;
+  background-color: #f1f3f4;
+  padding: 5px 20px 5px 0px;
+}
+
+.recorder-timer{
+  width: 60px;
 }
 
 #stopRecording,
 #startRecording {
-  margin-top: 6px;
   cursor: pointer;
+  padding-top: 7px;
 }
 #startRecording {
   color: red;
+  padding-top: 5px;
 }
+
 #stopRecording {
   color: black;
 }
+#startRecording:hover,
+#stopRecording:hover {
+  background-color: #ddd;
+  border-radius: 5px;
+}
 
-#audio-control {
-  background-color: white;
+
+@media screen and (max-width: 720px) {
+  .home {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr, 1fr;
+    transition: 1s;
+  }
+  header .container {
+    flex-direction: column;
+  }
+  .ql-editor {
+    height: 280px;
+  }
+  .editor-container {
+    height: auto;
+  }
+
 }

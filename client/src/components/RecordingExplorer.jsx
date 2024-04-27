@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useRecordingsContext } from "../hooks/useRecordingsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { config } from "../constants";
-//import DocumentForm from "./DocumentForm";
 
 const RecordingExplorer = () => {
   const { recordings, dispatch } = useRecordingsContext(); // destructure to get array and dispatch function from context
@@ -16,22 +15,21 @@ const RecordingExplorer = () => {
   let fetchRecordings = null;
   //fetch all recordings for current user's open song via useEffect
   useEffect(() => {
-    if (user && song_id) {
-      fetchRecordings = async () => {
-        const response = await fetch(URL + "/api/recordings/user/" + song_id, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-        const json = await response.json();
+    fetchRecordings = async () => {
+      const response = await fetch(URL + "/api/recordings/user/" + song_id, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      const json = await response.json();
 
-        if (response.ok) {
-          //setDocuments(json);
-          console.log(json);
-          dispatch({ type: "SET_RECORDINGS", payload: json }); //dispatch will trigger recordingsReducer passing in the action type. This updates the state with the payload of json data from the fetch
-        }
-      };
-    }
+      if (response.ok) {
+        //setDocuments(json);
+        console.log(json);
+        dispatch({ type: "SET_RECORDINGS", payload: json }); //dispatch will trigger recordingsReducer passing in the action type. This updates the state with the payload of json data from the fetch
+      }
+    };
+
     if (user && song_id) {
       fetchRecordings();
     }

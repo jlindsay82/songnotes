@@ -1,20 +1,30 @@
+import { useState, useContext, useEffect } from "react";
 import { useSongsContext } from "../hooks/useSongsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useDocumentsContext } from "../hooks/useDocumentsContext";
 import { useRecordingsContext } from "../hooks/useRecordingsContext";
+import { OpenSongContext } from "../context/OpenSongContext";
+import SongUpdateForm from "../components/SongUpdateForm";
+
 import { config } from "../constants";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 
 const SongDetails = ({ song }) => {
+  //set state variables
+const [displaySongUpdate, setDisplaySongUpdate] = useState(false);
+  // set contexts
   const { dispatch: songsDispatch } = useSongsContext();
   const { dispatch: documentsDispatch } = useDocumentsContext();
   const { user } = useAuthContext();
   const { dispatch: recordingsDispatch } = useRecordingsContext();
+  const { openSong, dispatch: openSongDispatch } = useContext(OpenSongContext);
 
+  //set variables
   const URL = config.url;
 
+  //handler functions
   const handleSelect = async () => {
     if (!user) {
       return;
@@ -30,6 +40,11 @@ const SongDetails = ({ song }) => {
     if (response.ok) {
       console.log("song selected:", json);
       sessionStorage.setItem("openSong", JSON.stringify(json)); //set selected song as current open song
+
+      openSongDispatch({ type: "SET_OPEN_SONG", payload: json });
+      if(openSong){
+        console.log("openSong: " + openSong.title);
+      }
 
       const fetchDocuments = async () => {
         const response = await fetch(URL + "/api/documents/user/" + song._id, {
@@ -67,6 +82,13 @@ const SongDetails = ({ song }) => {
     }
   };
 
+  const handleUpdate = async () => {
+    if (!user) {
+      return;
+    }
+    setDisplaySongUpdate(!displaySongUpdate);
+  };
+
   const handleDelete = async () => {
     if (!user) {
       return;
@@ -86,28 +108,9 @@ const SongDetails = ({ song }) => {
     }
   };
 
-  const handleUpdate = async () => {
-    if (!user) {
-      return;
-    }
-
-    const response = await fetch(URL + "/api/songs/" + song._id, {
-      method: "PATCH",
-      body: JSON.stringify(song),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
-    const json = await response.json();
-
-    if (response.ok) {
-      songsDispatch({ type: "UPDATE_SONG", payload: json });
-      console.log("song updated:", json);
-    }
-  };
-
   return (
+    <>
+    {displaySongUpdate && <SongUpdateForm song={song}/>}
     <div className="explorer-item">
       <h4>{song.title}</h4>
       <p>
@@ -126,15 +129,16 @@ const SongDetails = ({ song }) => {
         <FileOpenIcon />
         <span className="tooltiptext">View Song</span>
       </span>
-      <span className={`action tooltip`} onClick={handleDelete}>
-        <DeleteIcon />
-        <span className="tooltiptext">Delete Song</span>
-      </span>
       <span className={`action tooltip`} onClick={handleUpdate}>
         <EditIcon />
         <span className="tooltiptext">Update Song</span>
       </span>
+      <span className={`action tooltip`} onClick={handleDelete}>
+        <DeleteIcon />
+        <span className="tooltiptext">Delete Song</span>
+      </span>
     </div>
+    </>
   );
 };
 

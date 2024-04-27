@@ -23,9 +23,8 @@ export const documentsReducer = (state, action) => {
     case "UPDATE_DOCUMENT":
       console.log();
       return {
-        documents: state.documents.filter(
-          (document) => document._id === action.payload._id
-        ),
+        documents: [action.payload, ...state.documents.filter((document) => document._id !== action.payload._id)]
+        ,
       };
     default:
       return state;
