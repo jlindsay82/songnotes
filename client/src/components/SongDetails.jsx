@@ -11,9 +11,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 
-const SongDetails = ({ song }) => {
+const SongDetails = ({ song, selected }) => {
   //set state variables
-const [displaySongUpdate, setDisplaySongUpdate] = useState(false);
+  const [displaySongUpdate, setDisplaySongUpdate] = useState(false);
+
   // set contexts
   const { dispatch: songsDispatch } = useSongsContext();
   const { dispatch: documentsDispatch } = useDocumentsContext();
@@ -23,12 +24,14 @@ const [displaySongUpdate, setDisplaySongUpdate] = useState(false);
 
   //set variables
   const URL = config.url;
+  //console.log("SongDetails selected status of songId " + song._id + " is " + selected);
 
   //handler functions
   const handleSelect = async () => {
     if (!user) {
       return;
     }
+  
     const response = await fetch(URL + "/api/songs/" + song._id, {
       method: "GET",
       headers: {
@@ -38,12 +41,12 @@ const [displaySongUpdate, setDisplaySongUpdate] = useState(false);
     const json = await response.json();
 
     if (response.ok) {
-      console.log("song selected:", json);
+      //console.log("song selected:", json);
       sessionStorage.setItem("openSong", JSON.stringify(json)); //set selected song as current open song
 
       openSongDispatch({ type: "SET_OPEN_SONG", payload: json });
       if(openSong){
-        console.log("openSong: " + openSong.title);
+        //console.log("openSong: " + openSong.title);
       }
 
       const fetchDocuments = async () => {
@@ -55,7 +58,7 @@ const [displaySongUpdate, setDisplaySongUpdate] = useState(false);
         const documentsJson = await response.json();
 
         if (response.ok) {
-          console.log(documentsJson);
+          //console.log(documentsJson);
           documentsDispatch({ type: "SET_DOCUMENTS", payload: documentsJson }); //dispatch will trigger songsReducer passing in the action type. This updates the state with the payload of json data from the fetch
         }
       };
@@ -68,7 +71,7 @@ const [displaySongUpdate, setDisplaySongUpdate] = useState(false);
         const recordingsJson = await response.json();
 
         if (response.ok) {
-          console.log(recordingsJson);
+          //console.log(recordingsJson);
           recordingsDispatch({
             type: "SET_RECORDINGS",
             payload: recordingsJson,
@@ -111,7 +114,7 @@ const [displaySongUpdate, setDisplaySongUpdate] = useState(false);
   return (
     <>
     {displaySongUpdate && <SongUpdateForm song={song}/>}
-    <div className="explorer-item">
+    <div className={`explorer-item ${selected && "selected"}`}>
       <h4>{song.title}</h4>
       <p>
         <strong>Genre: </strong>

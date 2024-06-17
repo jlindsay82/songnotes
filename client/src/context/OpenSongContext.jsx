@@ -4,7 +4,7 @@ export const OpenSongContext = createContext();
 
 //reducer keeps local state in sync using defined action types
 export const openSongReducer = (state, action) => {
-  console.log(action.payload);
+  //console.log(action.payload);
   switch (action.type) {
     case "SET_OPEN_SONG":
       return {

@@ -1,0 +1,15 @@
+div.message {
+    padding: 2px;
+    height: 15px;
+    color: var(--primary);
+    border-radius: 4px;
+    margin: 5px 0;
+    opacity: 0;
+    transition: opacity 1s, transform 1s;
+    transform: translateY(10px);
+  }
+  
+  div.message.show{
+      opacity: 1;
+      transform: translateY(0);
+  }

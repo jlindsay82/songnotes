@@ -7,6 +7,7 @@ import { config } from "../constants";
 import SongForm from "./SongForm";
 
 const SongExplorer = () => {
+  const [openSongId, setOpenSongId] = useState("");
   //set contexts
   const { songs, dispatch } = useSongsContext();
   const { user } = useAuthContext();
@@ -34,6 +35,16 @@ const SongExplorer = () => {
     }
   }, [dispatch, user]);
 
+
+  useEffect(() => {
+    //console.log(openSong);
+    if(openSong){
+      setOpenSongId(openSong._id);
+      //console.log("Refreshing open song id: " + openSongId);
+    }
+  }, [openSong]);
+
+
   return (
     <div className="explorer-container">
       <h4 className="flex-container explorer-heading">
@@ -44,7 +55,7 @@ const SongExplorer = () => {
       </h4>
       <div className="explorer-list">
         {songs &&
-          songs.map((song) => <SongDetails key={song._id} song={song} />)}
+          songs.map((song) => <SongDetails key={song._id} selected={openSongId===song._id} song={song} />)}
       </div>
     </div>
   );

@@ -1,23 +1,31 @@
 import { useState } from "react";
 import { useSongsContext } from "../hooks/useSongsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import Message from './Message';
 import { config } from "../constants";
 
 const SongForm = () => {
+  
+  //set state variables
   const [display, setDisplay] = useState(false);
-  const { dispatch } = useSongsContext();
-  const { user } = useAuthContext();
-
-  const URL = config.url;
-
   const [title, setTitle] = useState("");
   const [genre, setGenre] = useState("");
   const [key, setKey] = useState("");
   const [tempo, setTempo] = useState("");
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
 
+  // set contexts
+  const { user } = useAuthContext();
+  const { dispatch } = useSongsContext();
+
+  //set variables
+  const URL = config.url;
+
+  //set functions
   const toggleModal = () => {
     setDisplay(!display); // changes previous state to oppposite state
+    setMessage(null);
   };
 
   const handleSubmit = async (e) => {
@@ -52,6 +60,7 @@ const SongForm = () => {
       console.log("new song added:", json);
       dispatch({ type: "CREATE_SONG", payload: json }); //update context to see new song in songDetails component
       sessionStorage.setItem("openSong", JSON.stringify(json)); //set new song song to current open song
+      setMessage("Song created successfully!")
     }
   };
 
@@ -99,6 +108,7 @@ const SongForm = () => {
           />
 
           <button>Create Song</button>
+          <Message message={message} />
           {error && <div className="error">{error}</div>}
         </form>
       )}

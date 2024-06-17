@@ -9,7 +9,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 
-const DocumentDetails = ({ document }) => {
+const DocumentDetails = ({ document, selected }) => {
 //set state variables
 const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
 
@@ -39,7 +39,7 @@ const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
     const json = await response.json();
 
     if (response.ok) {
-      console.log("document selected:", json);
+      //console.log("document selected:", json);
       sessionStorage.setItem("openDocument", JSON.stringify(json)); //set selected document as current open document
       editorDispatch({ type: "SET_EDITOR", payload: json });
     }
@@ -63,7 +63,7 @@ const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
 
     if (response.ok) {
       dispatch({ type: "DELETE_DOCUMENT", payload: json });
-      console.log("document deleted:", json);
+      //console.log("document deleted:", json);
       //if deleted document is the open document, then this should be cleared from local storage
       if (
         JSON.parse(sessionStorage.getItem("openDocument")) &&
@@ -80,7 +80,7 @@ const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
       if (!user) {
         return;
       }
-      console.log("clicked on update")
+      //console.log("clicked on update")
       setDisplayDocumentUpdate(!displayDocumentUpdate);
 
   };
@@ -88,7 +88,7 @@ const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
   return (
     <>
     {displayDocumentUpdate && (<DocumentUpdateForm document={document}/>)}
-    <div className="explorer-item">
+    <div className={`explorer-item ${selected && "selected"}`}>
       <h4>{document.title}</h4>
       <span className={`action tooltip`} onClick={handleSelect}>
         <FileOpenIcon />

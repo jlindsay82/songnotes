@@ -1,12 +1,18 @@
 import { useState, useContext, useEffect } from "react";
 import { useSongsContext } from "../hooks/useSongsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import Message from "./Message";
 
 import { config } from "../constants";
 
 const SongUpdateForm = ({song}) => {
   //set state variables
   const [display, setDisplay] = useState(true);
+  const [title, setTitle] = useState(song.title);
+  const [genre, setGenre] = useState(song.genre);
+  const [key, setKey] = useState(song.key);
+  const [tempo, setTempo] = useState(song.tempo);
+  const [message, setMessage] = useState(null);
 
   //set contexts
   const { dispatch:songsDispatch } = useSongsContext();
@@ -15,20 +21,15 @@ const SongUpdateForm = ({song}) => {
   //set variables
   const URL = config.url;
 
-  const [title, setTitle] = useState(song.title);
-  const [genre, setGenre] = useState(song.genre);
-  const [key, setKey] = useState(song.key);
-  const [tempo, setTempo] = useState(song.tempo);
-  const [error, setError] = useState(null);
-
   const toggleModal = () => {
     setDisplay(!display); // changes previous state to oppposite state
+    setMessage(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      setError("You must be logged in");
+      setMessage("You must be logged in");
       return;
     }
 
@@ -46,8 +47,10 @@ const SongUpdateForm = ({song}) => {
 
     if (response.ok) {
       songsDispatch({ type: "UPDATE_SONG", payload: json });
+      setMessage("Updated successfully!");
       console.log("song updated:", json);
     }
+
   };
 
   return (
@@ -89,7 +92,8 @@ const SongUpdateForm = ({song}) => {
           />
 
           <button>Update Song</button>
-          {error && <div className="error">{error}</div>}
+          <Message message={message} />
+
         </form>)}
     </>
   );

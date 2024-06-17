@@ -4,11 +4,11 @@ export const EditorContext = createContext();
 
 //reducer keeps local state in sync using defined action types
 export const editorReducer = (state, action) => {
-  console.log(action.payload);
+  //console.log("document content: ", action.payload.title);
   switch (action.type) {
     case "SET_EDITOR":
       return {
-        document: action.payload,
+        documentContent: action.payload,
       };
     default:
       return state;
@@ -20,7 +20,7 @@ export const editorReducer = (state, action) => {
 
 export const EditorContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(editorReducer, {
-    document: null,
+    documentContent: null,
   });
 
   return (

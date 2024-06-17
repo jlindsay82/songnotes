@@ -5,10 +5,13 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { EditorContext } from "../context/EditorContext";
 import { useContext } from "react";
 import { config } from "../constants";
+import Message from './Message';
 
 const DocumentEditor = () => {
   //set state variables
   const [editorValue, setEditorValue] = useState("");
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
 
   //set variables
   const { user } = useAuthContext();
@@ -31,7 +34,14 @@ const DocumentEditor = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+    if(!document_title){
+      setError("You must select a document before you save the content!");
+    }
+
     if (JSON.parse(sessionStorage.getItem("openDocument"))) {
+      setError(null);
+      setMessage(null);
       const { title } = JSON.parse(sessionStorage.getItem("openDocument"));
       const content = editorValue;
       const { _id: song_id } = JSON.parse(sessionStorage.getItem("openSong"));
@@ -59,6 +69,7 @@ const DocumentEditor = () => {
       }
       if (response.ok) {
         console.log("document updated:", json);
+        setMessage("Document saved successfully!");
       }
     }
   };
@@ -66,14 +77,16 @@ const DocumentEditor = () => {
   return (
     <div className="editor-container">
       <h4>
-        Document Title:{" "}
+        Document Title:
         <span className="smaller"> {document_title}&nbsp; </span>
-        <span className="right-align">
+        <p></p>
           <button className="save-button" onClick={handleSave}>
             Save
           </button>
-        </span>
+          <span class="smaller"><Message message={message} /></span>
       </h4>
+      
+      {error && <div className="error">{error}</div>}
       <div className="quill-container">
         <ReactQuill
           id="quill-editor"

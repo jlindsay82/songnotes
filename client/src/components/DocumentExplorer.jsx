@@ -1,18 +1,30 @@
 import DocumentDetails from "./DocumentDetails";
-import { useEffect } from "react";
+import { useEffect, useState, useContext  } from "react";
 import { useDocumentsContext } from "../hooks/useDocumentsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { config } from "../constants";
 import DocumentForm from "./DocumentForm";
+import { EditorContext } from "../context/EditorContext";
 
 const DocumentExplorer = () => {
+  const [openDocumentId, setOpenDocumentId] = useState("");
   const { documents, dispatch } = useDocumentsContext(); // destructure to get array and dispatch function from context
   const { user } = useAuthContext(); // get current authorised user
+  const { documentContent } = useContext(EditorContext);
+
+
   const URL = config.url; //dynamic URL path for dev and prod environment
   let song_id = null;
   if (JSON.parse(sessionStorage.getItem("openSong"))) {
     song_id = JSON.parse(sessionStorage.getItem("openSong"))._id; //get current open song
   }
+  useEffect(() => {
+    if(documentContent){
+      setOpenDocumentId(documentContent._id);
+      //console.log("Refreshing open document id: " + openDocumentId);
+    }
+  }, [documentContent]);
+
   let fetchDocuments = null;
   //fetch all documents for current user's open song via useEffect
   useEffect(() => {
@@ -26,7 +38,7 @@ const DocumentExplorer = () => {
         const json = await response.json();
 
         if (response.ok) {
-          console.log(json);
+          //console.log(json);
           dispatch({ type: "SET_DOCUMENTS", payload: json }); //dispatch will trigger songsReducer passing in the action type. 
           //This dispatch updates the state with the payload of json data from the fetch
         }
@@ -48,7 +60,7 @@ const DocumentExplorer = () => {
       <div className="explorer-list">
         {documents &&
           documents.map((document) => (
-            <DocumentDetails key={document._id} document={document} />
+            <DocumentDetails key={document._id} document={document} selected={openDocumentId===document._id} />
           ))}
       </div>
     </div>

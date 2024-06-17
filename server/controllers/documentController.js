@@ -8,7 +8,7 @@ const getDocuments = async (req, res) => {
   res.status(200).json(documents);
   
   documents.forEach(function (document) {
-    console.log("get document: ",document._id, document.title);
+    console.log("get document: ", document._id, document.title);
   })
 };
 

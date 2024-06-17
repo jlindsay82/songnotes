@@ -3,6 +3,7 @@ import { useDocumentsContext } from "../hooks/useDocumentsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { OpenSongContext } from "../context/OpenSongContext";
 import { config } from "../constants";
+import Message from "./Message";
 
 const DocumentForm = () => {
   //ste state
@@ -10,6 +11,7 @@ const DocumentForm = () => {
   const [song_id, setSongId] = useState("");
   const [title, setTitle] = useState("");
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
 
   //set contexts
   const { dispatch } = useDocumentsContext();
@@ -24,6 +26,7 @@ const DocumentForm = () => {
     if (openSong) {
       setSongId(openSong._id);
       setError(null);
+      setMessage(null);
       //console.log(song_id);
     }
   }, [openSong]);
@@ -31,11 +34,13 @@ const DocumentForm = () => {
   const content = "";
 
   const toggleModal = () => {
+    setMessage(null);
     setDisplay(!display); // changes previous state to oppposite state
     if (!song_id) {
       setError("You must select a Song project before creating a new document");
       if (song_id) {
         setError(null);
+
       }
 
       return;
@@ -69,6 +74,7 @@ const DocumentForm = () => {
       setError(null);
       console.log("new document added:", json);
       dispatch({ type: "CREATE_DOCUMENT", payload: json }); //update context to see new document in DocumentDetails component
+      setMessage("Document created successfully!")
     }
   };
 
@@ -97,6 +103,7 @@ const DocumentForm = () => {
           />
 
           <button disabled={!song_id}>Create Document</button>
+          <Message message={message} />
           {error && <div className="error">{error}</div>}
         </form>
       )}

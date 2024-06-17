@@ -14,14 +14,12 @@ export const documentsReducer = (state, action) => {
         documents: [action.payload, ...state.documents],
       };
     case "DELETE_DOCUMENT":
-      console.log();
       return {
         documents: state.documents.filter(
           (document) => document._id !== action.payload._id
         ),
       };
     case "UPDATE_DOCUMENT":
-      console.log();
       return {
         documents: [action.payload, ...state.documents.filter((document) => document._id !== action.payload._id)]
         ,

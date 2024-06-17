@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useDocumentsContext } from "../hooks/useDocumentsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import Message from "./Message";
 
 import { config } from "../constants";
 
 const DocumentUpdateForm = ({document}) => {
   //set state variables
   const [display, setDisplay] = useState(true);
+  const [message, setMessage] = useState(null);
+  const [title, setTitle] = useState(document.title);
 
   //set contexts
   const { dispatch:documentsDispatch } = useDocumentsContext();
@@ -15,17 +18,15 @@ const DocumentUpdateForm = ({document}) => {
   //set variables
   const URL = config.url;
 
-  const [title, setTitle] = useState(document.title);
-  const [error, setError] = useState(null);
-
   const toggleModal = () => {
     setDisplay(!display); // changes previous state to oppposite state
+    setMessage(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      setError("You must be logged in");
+      setMessage("You must be logged in!");
       return;
     }
 
@@ -43,8 +44,10 @@ const DocumentUpdateForm = ({document}) => {
 
     if (response.ok) {
       documentsDispatch({ type: "UPDATE_DOCUMENT", payload: json });
+      setMessage("Updated successfully!");
       console.log("document updated:", json);
     }
+
   };
 
   return (
@@ -66,7 +69,7 @@ const DocumentUpdateForm = ({document}) => {
           />
 
           <button>Update Document</button>
-          {error && <div className="error">{error}</div>}
+          <Message message={message} />
         </form>)}
     </>
   );
