@@ -6,7 +6,7 @@ import { config } from "../constants";
 
 import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
-import DownloadIcon from '@mui/icons-material/Download';
+import DownloadIcon from "@mui/icons-material/Download";
 
 const AudioRecorder = () => {
   //set state variables
@@ -14,10 +14,12 @@ const AudioRecorder = () => {
   const [recordingNumber, setRecordingNumber] = useState(1);
   const [title, setTitle] = useState("");
   const [audioData, setAudioData] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
   const [song_id, setSongId] = useState("");
   const [song_title, setSongTitle] = useState("");
   const [error, setError] = useState(null);
   const [count, setCount] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
 
   //set contexts
   const { user } = useAuthContext();
@@ -91,12 +93,13 @@ const AudioRecorder = () => {
         // Event handler when recording is stopped
         mediaRecorder.onstop = function () {
           // Combine audio chunks into a Blob
-          let blob = new Blob(chunks, { type: "audio/wav" });
+          let blob = new Blob(chunks, { type: "audio/webm" });
 
           // Create a temporary URL for the Blob
           const blobUrl = URL.createObjectURL(blob);
 
-          //capture blob content for server upload
+          // Store both blob and URL
+          setAudioBlob(blob);
           setAudioData(blobUrl);
 
           // Create an audio element
@@ -136,8 +139,6 @@ const AudioRecorder = () => {
             setCount(0);
             clearTimeout(timer);
           });
-
-
       })
       .catch(function (err) {
         console.error("Error accessing microphone:", err);
@@ -147,60 +148,72 @@ const AudioRecorder = () => {
   }, [recordingNumber]);
 
   const handleSave = async () => {
-    //console.log("saveRecording was clicked");
     if (!user) {
       setError("You must be logged in.");
       return;
     }
-    if(!song_id){
+    if (!song_id) {
       setError("You must select a Song project before saving a recording.");
       return;
     }
-    if (song_id) {
+    if (!audioBlob) {
+      setError("No recording to save. Please record audio first.");
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
       const title = `${song_title}_${currentDate}_${recordingNumber}`;
-      console.log(audioData);
-      let data = audioData;
-      // const reader = new FileReader();
-      // reader.readAsArrayBuffer(audioData);
-      // reader.onload = async function (event) {
-      //   data = event.target.result;
-      //console.log(data);
-      // let formData = new FormData();
-      // formData.append("title", title);
-      // formData.append("data", audioData);
-      // formData.append("song_id", song_id);
-      const recording = { title, data, song_id };
+      const formData = new FormData();
+
+      // Append the audio blob as a file
+      formData.append("audioFile", audioBlob, `${title}.webm`);
+      formData.append("title", title);
+      formData.append("song_id", song_id);
+      formData.append("duration", count);
+
+      // Also keep the blob URL for backward compatibility
+      formData.append("data", audioData);
+
       const response = await fetch(fetchURL + "/api/recordings/user/", {
         method: "POST",
-        body: JSON.stringify(recording),
-        //body: formData,
+        body: formData,
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
+          // Don't set Content-Type header - let browser set it with boundary for FormData
         },
       });
 
       const json = await response.json();
 
       if (!response.ok) {
-        setError(json.error);
-      }
-      if (response.ok) {
+        setError(json.error || "Failed to save recording");
+      } else {
         setError(null);
-        console.log("new recording added:", json);
-        dispatch({ type: "CREATE_RECORDING", payload: json }); //update context to see new recording in RecordingExplorer component
+        console.log("New recording added:", json);
+        dispatch({ type: "CREATE_RECORDING", payload: json });
       }
+    } catch (error) {
+      console.error("Save error:", error);
+      setError("Failed to save recording. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
   // when the user clicks download button
-  const handleDownload = () =>{
-    const audioURL = document.getElementById("audioControl").src
-    if(audioURL){
+  const handleDownload = () => {
+    const audioURL = document.getElementById("audioControl").src;
+    if (audioURL) {
       console.log("clicked download");
-      let hidden_a = document.createElement('a');
+      let hidden_a = document.createElement("a");
       hidden_a.href = audioURL;
-      hidden_a.setAttribute('download', `${song_title}_${currentDate}_${recordingNumber}.wav`);
+      hidden_a.setAttribute(
+        "download",
+        `${song_title}_${currentDate}_${recordingNumber}.wav`
+      );
       document.body.appendChild(hidden_a);
       hidden_a.click();
     }
@@ -220,18 +233,29 @@ const AudioRecorder = () => {
           {`${Math.floor(count / 60)}`.padStart(2, 0)}:
           {`${count % 60}`.padStart(2, 0)}
         </span>
-        <button id="saveRecording" className="save-button" onClick={handleSave}>
-          Save
+        <button
+          id="saveRecording"
+          className="save-button"
+          onClick={handleSave}
+          disabled={isSaving || !audioBlob}
+        >
+          {isSaving ? "Saving..." : "Save"}
         </button>
       </div>
       <h4>Song Player</h4>
       <div className="audioplayer">
-      <audio
-        controls
-        id="audioControl"
-        title={`${song_title}_${currentDate}_${recordingNumber}`}
-      ></audio>
-      <div className="action-button" onClick={handleDownload} style={{marginTop:"8px"}}><DownloadIcon /></div>
+        <audio
+          controls
+          id="audioControl"
+          title={`${song_title}_${currentDate}_${recordingNumber}`}
+        ></audio>
+        <div
+          className="action-button"
+          onClick={handleDownload}
+          style={{ marginTop: "8px" }}
+        >
+          <DownloadIcon />
+        </div>
       </div>
     </div>
   );
