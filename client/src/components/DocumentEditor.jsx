@@ -5,7 +5,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { EditorContext } from "../context/EditorContext";
 import { useContext } from "react";
 import { config } from "../constants";
-import Message from './Message';
+import Message from "./Message";
 
 const DocumentEditor = () => {
   //set state variables
@@ -35,7 +35,7 @@ const DocumentEditor = () => {
   const handleSave = async (e) => {
     e.preventDefault();
 
-    if(!document_title){
+    if (!document_title) {
       setError("You must select a document before you save the content!");
     }
 
@@ -80,12 +80,14 @@ const DocumentEditor = () => {
         Document Title:
         <span className="smaller"> {document_title}&nbsp; </span>
         <p></p>
-          <button className="save-button" onClick={handleSave}>
-            Save
-          </button>
-          <span class="smaller"><Message message={message} /></span>
+        <button className="save-button" onClick={handleSave}>
+          Save
+        </button>
+        <span className="smaller">
+          <Message message={message} />
+        </span>
       </h4>
-      
+
       {error && <div className="error">{error}</div>}
       <div className="quill-container">
         <ReactQuill

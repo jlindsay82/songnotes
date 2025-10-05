@@ -1,25 +1,24 @@
-import {useState, useEffect} from 'react';
-import './styles/message.css';
+import { useState, useEffect } from "react";
+import "./styles/message.css";
 
-const Message = ({message}) => {
-    const [classNames, setClassNames] = useState("message");
-    const [customMessage, setCustomMessage] = useState(null);
+const Message = ({ message }) => {
+  const [classNames, setClassNames] = useState("message");
+  const [customMessage, setCustomMessage] = useState(null);
 
-useEffect(() =>{
+  useEffect(() => {
     setCustomMessage(message);
     setClassNames("message show");
-    
-    setTimeout(() => {
-        setClassNames("message");
-        }, 3000
-      )
-    },[message])
 
-    return ( 
-        <div class={classNames}>
-            <p>{customMessage}</p>
-        </div>
-     );
-}
- 
+    setTimeout(() => {
+      setClassNames("message");
+    }, 3000);
+  }, [message]);
+
+  return (
+    <div className={classNames}>
+      <p>{customMessage}</p>
+    </div>
+  );
+};
+
 export default Message;

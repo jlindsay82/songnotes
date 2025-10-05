@@ -23,7 +23,6 @@ body {
 }
 
 #root {
-  width: 100vw;
   max-width: 1400px;
   min-height: 99vh;
   background-color: var(--secondary);
@@ -132,6 +131,7 @@ header a {
   min-height: 400px;
   height: auto;
   margin: 5px;
+  padding-left: 10px;
 }
 
 /* new song form */
@@ -185,7 +185,6 @@ div.error {
   border-radius: 4px;
   margin: 5px 0;
 }
-
 
 /* navbar */
 nav {
@@ -284,14 +283,14 @@ form.login {
 /*SongSpace*/
 .editor-container {
   height: auto;
-  max-height: 65vh;
 }
 
 .ql-container.ql-snow {
   height: auto;
 }
 .ql-editor {
-  height:500px;
+  height: 65vh;
+  max-height: 500px;
   overflow-y: scroll;
 }
 
@@ -299,34 +298,34 @@ form.login {
 .audio-section-container {
   height: 270px;
   border-top: solid 2px white;
+  padding-left: 5px;
 }
 
 .recorder-controls-container {
   width: auto;
-  max-width:370px;
+  max-width: 370px;
   display: flex;
   align-items: center;
   gap: 10px;
-  border: solid 1px  var(--primary);
+  border: solid 1px var(--primary);
   border-radius: 5px;
   background-color: #f1f3f4;
   padding: 12.5px 5px 12.5px 15px;
-
 }
 
-.audioplayer{
+.audioplayer {
   width: auto;
-  max-width:370px;
+  max-width: 370px;
   display: flex;
   align-items: center;
   gap: 10px;
-  border: solid 1px  var(--primary);
+  border: solid 1px var(--primary);
   border-radius: 5px;
   background-color: #f1f3f4;
   padding: 5px 20px 5px 0px;
 }
 
-.recorder-timer{
+.recorder-timer {
   width: 60px;
 }
 
@@ -349,7 +348,6 @@ form.login {
   border-radius: 5px;
 }
 
-
 @media screen and (max-width: 720px) {
   .home {
     grid-template-columns: 1fr;
@@ -365,5 +363,4 @@ form.login {
   .editor-container {
     height: auto;
   }
-
 }
