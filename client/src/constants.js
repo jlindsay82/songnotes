@@ -1,6 +1,6 @@
 // Constants.js
 const production = {
-  url: "https://songnotes.onrender.com",
+  url: "",
 };
 const development = {
   url: "http://localhost:4000",
