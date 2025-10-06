@@ -16,10 +16,9 @@ services:
       # - JWT_SECRET (your JWT secret key)
       # - AZURE_STORAGE_CONNECTION_STRING (your Azure storage credentials)
 
-  # Frontend Service
-  - type: web
+  # Frontend Service (Static Site)
+  - type: static
     name: songnotes-client
-    runtime: node
     region: oregon  # Change to your preferred region
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: ./client/dist  # Vite outputs to 'dist' folder
