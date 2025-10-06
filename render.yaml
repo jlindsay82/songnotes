@@ -4,9 +4,8 @@ services:
     name: songnotes-server
     runtime: node
     region: oregon  # Change to your preferred region
-    rootDir: server
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -22,9 +21,8 @@ services:
     name: songnotes-client
     runtime: node
     region: oregon  # Change to your preferred region
-    rootDir: client
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./dist  # Vite outputs to 'dist' folder
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: ./client/dist  # Vite outputs to 'dist' folder
     envVars:
       - key: NODE_ENV
         value: production
