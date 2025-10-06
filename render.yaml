@@ -17,8 +17,9 @@ services:
       # - AZURE_STORAGE_CONNECTION_STRING (your Azure storage credentials)
 
   # Frontend Service (Static Site)
-  - type: static
+  - type: web
     name: songnotes-client
+    runtime: static
     region: oregon  # Change to your preferred region
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: ./client/dist  # Vite outputs to 'dist' folder
