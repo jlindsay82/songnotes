@@ -20,7 +20,6 @@ services:
   - type: web
     name: songnotes-client
     runtime: static
-    region: oregon  # Change to your preferred region
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: ./client/dist  # Vite outputs to 'dist' folder
     envVars:
