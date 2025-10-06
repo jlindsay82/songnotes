@@ -1,6 +1,6 @@
 // Constants.js
 const production = {
-  url: "",
+  url: import.meta.env.VITE_API_URL || "",
 };
 const development = {
   url: "http://localhost:4000",

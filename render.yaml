@@ -1,0 +1,32 @@
+services:
+  # Backend API Service
+  - type: web
+    name: songnotes-server
+    runtime: node
+    region: oregon  # Change to your preferred region
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        sync: false  # You'll set this in Render dashboard to your client URL
+      # Add your other environment variables in Render dashboard:
+      # - MONGODB_URI (your MongoDB connection string)
+      # - JWT_SECRET (your JWT secret key)
+      # - AZURE_STORAGE_CONNECTION_STRING (your Azure storage credentials)
+
+  # Frontend Service
+  - type: web
+    name: songnotes-client
+    runtime: node
+    region: oregon  # Change to your preferred region
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist  # Vite outputs to 'dist' folder
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        sync: false  # You'll set this in Render dashboard to your server URL
