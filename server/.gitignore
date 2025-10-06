@@ -7,3 +7,6 @@
 # ignore ALL files in ANY directory named temp
 node_modules/
 uploads/
+
+#ignore ai assist markdown
+claude.md
