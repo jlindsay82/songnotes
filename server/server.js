@@ -13,7 +13,11 @@ const recordingRoutes = require("./routes/recordings");
 const app = express();
 
 //middleware
-app.use(cors());
+const corsOptions = {
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.join("public")));
 
