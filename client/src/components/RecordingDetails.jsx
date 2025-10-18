@@ -152,10 +152,6 @@ const RecordingDetails = ({ recording }) => {
           </span>
         </span>
       )}
-      <span className={`action tooltip`} onClick={handleSelect}>
-        <FileOpenIcon />
-        <span className="tooltiptext">View recording</span>
-      </span>
       <span className={`action tooltip`} onClick={handleDelete}>
         <DeleteIcon />
         <span className="tooltiptext">Delete recording</span>

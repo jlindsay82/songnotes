@@ -7,6 +7,7 @@
   --secondary: #f4f4ee;
   --error: #e7195a;
   --yellow: #ffc300;
+  --disabled: #92918d;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,6 +161,10 @@ button {
 
 .save-button {
   background: var(--yellow);
+}
+
+.disabled-button {
+  background: var(--disabled);
 }
 
 form {
