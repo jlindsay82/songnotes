@@ -6,10 +6,10 @@ const getDocuments = async (req, res) => {
   const { song_id } = req.params;
   const documents = await Document.find({ song_id }).sort({ createdAt: -1 }); // sort descending filtered by song_id
   res.status(200).json(documents);
-  
+
   documents.forEach(function (document) {
     console.log("get document: ", document._id, document.title);
-  })
+  });
 };
 
 // get a single document
@@ -82,8 +82,8 @@ const updateDocument = async (req, res) => {
     }
   );
   res.status(200).json(await Document.findById(document_id));
-  const deletedDocument = await Document.findById(document_id);
-  console.log("document updated: ", deletedDocument._id, deletedDocument.title);
+  const updatedDocument = await Document.findById(document_id);
+  console.log("document updated: ", updatedDocument._id, updatedDocument.title);
 };
 
 module.exports = {
