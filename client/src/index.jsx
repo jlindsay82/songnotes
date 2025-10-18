@@ -10,19 +10,17 @@ import { RecordingsContextProvider } from "./context/RecordingsContext";
 import { OpenSongContextProvider } from "./context/OpenSongContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AuthContextProvider>
-      <SongsContextProvider>
-        <DocumentsContextProvider>
-          <EditorContextProvider>
-            <RecordingsContextProvider>
-              <OpenSongContextProvider>
-                <App />
-              </OpenSongContextProvider>
-            </RecordingsContextProvider>
-          </EditorContextProvider>
-        </DocumentsContextProvider>
-      </SongsContextProvider>
-    </AuthContextProvider>
-  </React.StrictMode>
+  <AuthContextProvider>
+    <SongsContextProvider>
+      <DocumentsContextProvider>
+        <EditorContextProvider>
+          <RecordingsContextProvider>
+            <OpenSongContextProvider>
+              <App />
+            </OpenSongContextProvider>
+          </RecordingsContextProvider>
+        </EditorContextProvider>
+      </DocumentsContextProvider>
+    </SongsContextProvider>
+  </AuthContextProvider>
 );
