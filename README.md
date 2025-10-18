@@ -1,2 +1,2 @@
 # songnotes
-college project - songnotes is a full stack (react front-end) web tool for capturing song ideas for songwriters
+songnotes is a mern stack web tool for capturing song ideas for songwriters
