@@ -3,6 +3,7 @@ import { useRecordingsContext } from "../hooks/useRecordingsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { OpenSongContext } from "../context/OpenSongContext";
 import { config } from "../constants";
+import Metronome from "./Metronome/Metronome";
 
 import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
@@ -241,6 +242,8 @@ const AudioRecorder = () => {
         >
           {isSaving ? "Saving..." : "Save"}
         </button>
+        <span>|</span>
+        <Metronome />
       </div>
       <h4>Song Player</h4>
       <div className="audioplayer">
