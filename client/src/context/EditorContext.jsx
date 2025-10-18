@@ -8,7 +8,11 @@ export const editorReducer = (state, action) => {
   switch (action.type) {
     case "SET_EDITOR":
       return {
-        documentContent: action.payload,
+        document: action.payload,
+      };
+    case "CLEAR_EDITOR":
+      return {
+        document: "",
       };
     default:
       return state;
@@ -20,7 +24,7 @@ export const editorReducer = (state, action) => {
 
 export const EditorContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(editorReducer, {
-    documentContent: null,
+    document: null,
   });
 
   return (

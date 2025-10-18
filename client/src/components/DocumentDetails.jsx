@@ -10,11 +10,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 
 const DocumentDetails = ({ document, selected }) => {
-//set state variables
-const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
+  //set state variables
+  const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
 
-// set contexts
-  const { dispatch } = useDocumentsContext();
+  // set contexts
+  const { dispatch: documentDispatch } = useDocumentsContext();
   const { user } = useAuthContext();
   const { dispatch: editorDispatch } = useContext(EditorContext);
 
@@ -40,7 +40,6 @@ const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
 
     if (response.ok) {
       //console.log("document selected:", json);
-      sessionStorage.setItem("openDocument", JSON.stringify(json)); //set selected document as current open document
       editorDispatch({ type: "SET_EDITOR", payload: json });
     }
   };
@@ -62,7 +61,7 @@ const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
     const json = await response.json();
 
     if (response.ok) {
-      dispatch({ type: "DELETE_DOCUMENT", payload: json });
+      documentDispatch({ type: "DELETE_DOCUMENT", payload: json });
       //console.log("document deleted:", json);
       //if deleted document is the open document, then this should be cleared from local storage
       if (
@@ -76,33 +75,31 @@ const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
   };
 
   const handleUpdate = async () => {
-
-      if (!user) {
-        return;
-      }
-      //console.log("clicked on update")
-      setDisplayDocumentUpdate(!displayDocumentUpdate);
-
+    if (!user) {
+      return;
+    }
+    //console.log("clicked on update")
+    setDisplayDocumentUpdate(!displayDocumentUpdate);
   };
 
   return (
     <>
-    {displayDocumentUpdate && (<DocumentUpdateForm document={document}/>)}
-    <div className={`explorer-item ${selected && "selected"}`}>
-      <h4>{document.title}</h4>
-      <span className={`action tooltip`} onClick={handleSelect}>
-        <FileOpenIcon />
-        <span className="tooltiptext">View document</span>
-      </span>
-      <span className={`action tooltip`} onClick={handleUpdate}>
-        <EditIcon />
-        <span className="tooltiptext">Update document</span>
-      </span>
-      <span className={`action tooltip`} onClick={handleDelete}>
-        <DeleteIcon />
-        <span className="tooltiptext">Delete document</span>
-      </span>
-    </div>
+      {displayDocumentUpdate && <DocumentUpdateForm document={document} />}
+      <div className={`explorer-item ${selected && "selected"}`}>
+        <h4>{document.title}</h4>
+        <span className={`action tooltip`} onClick={handleSelect}>
+          <FileOpenIcon />
+          <span className="tooltiptext">View document</span>
+        </span>
+        <span className={`action tooltip`} onClick={handleUpdate}>
+          <EditIcon />
+          <span className="tooltiptext">Update document</span>
+        </span>
+        <span className={`action tooltip`} onClick={handleDelete}>
+          <DeleteIcon />
+          <span className="tooltiptext">Delete document</span>
+        </span>
+      </div>
     </>
   );
 };

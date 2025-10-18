@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -12,66 +12,79 @@ const DocumentEditor = () => {
   const [editorValue, setEditorValue] = useState("");
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
+  const [unsaved, setUnsaved] = useState(false);
 
-  //set variables
+  //context
+  const { dispatch: editorDispatch } = useContext(EditorContext);
   const { user } = useAuthContext();
-  const { documentContent } = useContext(EditorContext);
-  let document_title = null;
+  const { document } = useContext(EditorContext);
   const URL = config.url;
 
-  if (user && JSON.parse(sessionStorage.getItem("openDocument"))) {
-    document_title = JSON.parse(sessionStorage.getItem("openDocument")).title;
-  }
+  // Get document data from EditorContext
+  const document_title = document?.title || null;
+  const document_id = document?._id || null;
+  const song_id = document?.song_id || null;
+
+  //establish when a document has been loaded for the first time
+  const isInitialLoad = useRef(false);
 
   //set content from EditorContext via useEffect
   useEffect(() => {
-    if (user && JSON.parse(sessionStorage.getItem("openDocument"))) {
-      setEditorValue(
-        JSON.parse(sessionStorage.getItem("openDocument")).content
-      );
+    if (user && document) {
+      setEditorValue(document.content);
+      isInitialLoad.current = true;
+      setUnsaved(false);
+    } else {
+      setEditorValue("");
     }
-  }, [documentContent]);
+  }, [document]);
 
   const handleSave = async (e) => {
     e.preventDefault();
 
-    if (!document_title) {
+    if (!document_title || !document_id || !song_id) {
       setError("You must select a document before you save the content!");
+      return;
     }
 
-    if (JSON.parse(sessionStorage.getItem("openDocument"))) {
-      setError(null);
-      setMessage(null);
-      const { title } = JSON.parse(sessionStorage.getItem("openDocument"));
-      const content = editorValue;
-      const { _id: song_id } = JSON.parse(sessionStorage.getItem("openSong"));
-      const { _id: document_id } = JSON.parse(
-        sessionStorage.getItem("openDocument")
-      );
-      const document = { title, content, song_id };
+    setError(null);
+    setMessage(null);
+    const title = document_title;
+    const content = editorValue;
+    const document = { title, content, song_id };
 
-      const response = await fetch(
-        URL + "/api/documents/document/" + document_id,
-        {
-          method: "PATCH",
-          body: JSON.stringify(document),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
-
-      const json = await response.json();
-
-      if (!response.ok) {
-        setError(json.error);
+    const response = await fetch(
+      URL + "/api/documents/document/" + document_id,
+      {
+        method: "PATCH",
+        body: JSON.stringify(document),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
       }
-      if (response.ok) {
-        console.log("document updated:", json);
-        setMessage("Document saved successfully!");
-      }
+    );
+
+    const json = await response.json();
+
+    if (!response.ok) {
+      setError(json.error);
     }
+    if (response.ok) {
+      //console.log("document updated:", json);
+      editorDispatch({ type: "SET_EDITOR", payload: json }); // json is the saved document from backend
+      setUnsaved(false);
+      setMessage("Document saved successfully!");
+    }
+  };
+
+  const handleChange = (value) => {
+    setEditorValue(value);
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      return;
+    }
+    setUnsaved(true);
   };
 
   return (
@@ -80,7 +93,11 @@ const DocumentEditor = () => {
         Document Title:
         <span className="smaller"> {document_title}&nbsp; </span>
         <p></p>
-        <button className="save-button" onClick={handleSave}>
+        <button
+          disabled={!unsaved}
+          className={unsaved ? "save-button" : "disabled-button"}
+          onClick={handleSave}
+        >
           Save
         </button>
         <span className="smaller">
@@ -93,7 +110,7 @@ const DocumentEditor = () => {
         <ReactQuill
           id="quill-editor"
           value={editorValue}
-          onChange={(value) => setEditorValue(value)}
+          onChange={handleChange}
           modules={{
             toolbar: [
               [{ header: [1, 2, false] }],

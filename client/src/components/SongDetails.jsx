@@ -5,6 +5,7 @@ import { useDocumentsContext } from "../hooks/useDocumentsContext";
 import { useRecordingsContext } from "../hooks/useRecordingsContext";
 import { OpenSongContext } from "../context/OpenSongContext";
 import SongUpdateForm from "../components/SongUpdateForm";
+import { EditorContext } from "../context/EditorContext";
 
 import { config } from "../constants";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,6 +22,7 @@ const SongDetails = ({ song, selected }) => {
   const { user } = useAuthContext();
   const { dispatch: recordingsDispatch } = useRecordingsContext();
   const { openSong, dispatch: openSongDispatch } = useContext(OpenSongContext);
+  const { dispatch: editorDispatch } = useContext(EditorContext);
 
   //set variables
   const URL = config.url;
@@ -31,7 +33,7 @@ const SongDetails = ({ song, selected }) => {
     if (!user) {
       return;
     }
-  
+
     const response = await fetch(URL + "/api/songs/" + song._id, {
       method: "GET",
       headers: {
@@ -45,7 +47,7 @@ const SongDetails = ({ song, selected }) => {
       sessionStorage.setItem("openSong", JSON.stringify(json)); //set selected song as current open song
 
       openSongDispatch({ type: "SET_OPEN_SONG", payload: json });
-      if(openSong){
+      if (openSong) {
         //console.log("openSong: " + openSong.title);
       }
 
@@ -78,9 +80,14 @@ const SongDetails = ({ song, selected }) => {
           }); //dispatch will trigger songsReducer passing in the action type. This updates the state with the payload of json data from the fetch
         }
       };
+      const clearOpenDocument = () => {
+        editorDispatch({ type: "CLEAR_EDITOR", payload: json }); // clear editor
+      };
+
       if (user) {
         fetchDocuments();
         fetchRecordings();
+        clearOpenDocument();
       }
     }
   };
@@ -113,34 +120,34 @@ const SongDetails = ({ song, selected }) => {
 
   return (
     <>
-    {displaySongUpdate && <SongUpdateForm song={song}/>}
-    <div className={`explorer-item ${selected && "selected"}`}>
-      <h4>{song.title}</h4>
-      <p>
-        <strong>Genre: </strong>
-        {song.genre}
-      </p>
-      <p>
-        <strong>Key: </strong>
-        {song.key}
-      </p>
-      <p>
-        <strong>Tempo (BPM): </strong>
-        {song.tempo}
-      </p>
-      <span className={`action tooltip`} onClick={handleSelect}>
-        <FileOpenIcon />
-        <span className="tooltiptext">View Song</span>
-      </span>
-      <span className={`action tooltip`} onClick={handleUpdate}>
-        <EditIcon />
-        <span className="tooltiptext">Update Song</span>
-      </span>
-      <span className={`action tooltip`} onClick={handleDelete}>
-        <DeleteIcon />
-        <span className="tooltiptext">Delete Song</span>
-      </span>
-    </div>
+      {displaySongUpdate && <SongUpdateForm song={song} />}
+      <div className={`explorer-item ${selected && "selected"}`}>
+        <h4>{song.title}</h4>
+        <p>
+          <strong>Genre: </strong>
+          {song.genre}
+        </p>
+        <p>
+          <strong>Key: </strong>
+          {song.key}
+        </p>
+        <p>
+          <strong>Tempo (BPM): </strong>
+          {song.tempo}
+        </p>
+        <span className={`action tooltip`} onClick={handleSelect}>
+          <FileOpenIcon />
+          <span className="tooltiptext">View Song</span>
+        </span>
+        <span className={`action tooltip`} onClick={handleUpdate}>
+          <EditIcon />
+          <span className="tooltiptext">Update Song</span>
+        </span>
+        <span className={`action tooltip`} onClick={handleDelete}>
+          <DeleteIcon />
+          <span className="tooltiptext">Delete Song</span>
+        </span>
+      </div>
     </>
   );
 };

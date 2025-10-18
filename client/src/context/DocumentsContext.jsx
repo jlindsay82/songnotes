@@ -11,7 +11,7 @@ export const documentsReducer = (state, action) => {
       };
     case "CREATE_DOCUMENT":
       return {
-        documents: [action.payload, ...state.documents],
+        documents: [action.payload, ...(state.documents || [])],
       };
     case "DELETE_DOCUMENT":
       return {
@@ -21,8 +21,12 @@ export const documentsReducer = (state, action) => {
       };
     case "UPDATE_DOCUMENT":
       return {
-        documents: [action.payload, ...state.documents.filter((document) => document._id !== action.payload._id)]
-        ,
+        documents: [
+          action.payload,
+          ...state.documents.filter(
+            (document) => document._id !== action.payload._id
+          ),
+        ],
       };
     default:
       return state;
