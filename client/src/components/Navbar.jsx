@@ -13,7 +13,7 @@ const Navbar = () => {
     <header>
       <div className="container">
         <Link to="/">
-          <div className="container">
+          <div className="flex-container">
             <h1>SongNotes</h1>
             <span style={{ paddingTop: "8px" }}>
               <img src={betaLogo} alt="beta logo" height="30px" width="30px" />
@@ -23,8 +23,9 @@ const Navbar = () => {
         <nav>
           {user && (
             <div className="flex-container">
-              <span>{user.email}</span>
-              <button onClick={handleClick}>Logout</button>
+              <button onClick={handleClick} className="smaller">
+                Logout
+              </button>
             </div>
           )}
           {!user && (
@@ -35,6 +36,7 @@ const Navbar = () => {
           )}
         </nav>
       </div>
+      {user && <div className="nav-username smaller">{user.email}</div>}
     </header>
   );
 };

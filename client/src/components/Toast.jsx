@@ -1,29 +1,29 @@
-import {useState, useEffect, useCallback} from 'react';
-import './styles/toast.css';
+import { useState, useEffect } from "react";
+import "./styles/toast.css";
 
-const Toast = ({message, duration = 3000}) => {
+const Toast = ({ message, duration = 3000 }) => {
+  const [classNames, setClassNames] = useState("toast show");
 
-    const [classNames, setClassNames] = useState("toast show");
+  useEffect(() => {
+    setTimeout(() => {
+      hideToast();
+    }, duration);
+  }, []);
 
-    useEffect(() => {
-        setTimeout(() => {
-            hideToast();
-        }, duration);
-    }, []);
+  const hideToast = () => {
+    setClassNames("toast");
+  };
 
-    const hideToast = () => {
-        setClassNames('toast');
-    };
-    
-    return ( 
+  return (
     <>
-        <div className={`${classNames} flex-container`}>
-            <span>{message}</span>
-            <span className="close" onClick={hideToast}>x</span>
+      <div className={`${classNames} flex-container`}>
+        <span>{message}</span>
+        <span className="close" onClick={hideToast}>
+          x
+        </span>
+      </div>
+    </>
+  );
+};
 
-        </div>
-    </>  
-     );
-}
- 
 export default Toast;
