@@ -90,8 +90,7 @@ const DocumentEditor = () => {
   return (
     <div className="editor-container">
       <h4>
-        Document Title:
-        <span className="smaller"> {document_title}&nbsp; </span>
+        {document_title}&nbsp;
         <p></p>
         <button
           disabled={!unsaved}
@@ -106,21 +105,21 @@ const DocumentEditor = () => {
       </h4>
 
       {error && <div className="error">{error}</div>}
-      <div className="quill-container">
-        <ReactQuill
-          id="quill-editor"
-          value={editorValue}
-          onChange={handleChange}
-          modules={{
-            toolbar: [
-              [{ header: [1, 2, false] }],
-              ["bold", "italic", "underline"],
-              ["image"],
-            ],
-          }}
-          theme="snow"
-        />
-      </div>
+      {/* <div className="quill-container"> */}
+      <ReactQuill
+        id="quill-editor"
+        value={editorValue}
+        onChange={handleChange}
+        modules={{
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            ["image"],
+          ],
+        }}
+        theme="snow"
+      />
+      {/* </div> */}
       <p></p>
     </div>
   );

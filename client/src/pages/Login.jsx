@@ -15,20 +15,28 @@ const Login = () => {
     <div className="pages">
       <form className="login" onSubmit={handleSubmit}>
         <h3>Log in</h3>
-        <label>Email:</label>
+        <label htmlFor="email">Email:</label>
         <input
           type="email"
+          name="email"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
         />
 
-        <label>Password:</label>
+        <label htmlFor="password">Password:</label>
         <input
           type="password"
+          name="password"
           onChange={(e) => setPassword(e.target.value)}
           value={password}
         />
-        <button disabled={isLoading}>Login</button>
+        <button
+          disabled={isLoading}
+          className="
+        login-button"
+        >
+          Login
+        </button>
         {error && <div className="error">{error}</div>}
       </form>
     </div>

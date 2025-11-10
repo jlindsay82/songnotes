@@ -3,52 +3,60 @@
 
 /* layout */
 :root {
-  --primary: #616161;
-  --secondary: #f4f4ee;
+  --primary: #212529;
+  --secondary: #343a40;
   --error: #e7195a;
-  --yellow: #ffc300;
+  --yellow: #ffc400;
   --disabled: #92918d;
   --orange: #ff9a00;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  --paper: #f4f4ee;
+  --blue: #3e95ad;
 }
 
 body {
   margin: 0;
   font-family: "Poppins";
+  font-weight: 100;
+  color: var(--paper);
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
 
-  color: var(--primary);
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 200;
+}
+p,
+span,
+li {
+  font-weight: 100;
 }
 
 #root {
   max-width: 1400px;
-  min-height: 99vh;
-  background-color: var(--secondary);
-  border-radius: 5px;
+  min-height: 100vh;
+  background: var(--primary);
 }
 
 header {
-  background: var(--primary);
-  color: var(--secondary) !important;
+  background: var(--secondary);
+  padding-bottom: 0.3rem;
 }
 
 header .container {
   margin: 0;
-  padding: 0px 5px;
+  padding: 0px 0.3rem;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
-header .container nav {
+header .container-wrap nav {
   padding: 0 20px;
 }
 header a {
-  color: white;
+  color: var(--yellow);
   text-decoration: none;
 }
 .pages .container {
@@ -65,34 +73,39 @@ header a {
 /* homepage */
 .home {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: 1px;
 }
 
 .explorer {
   min-width: 300px;
-  height: 100%;
   border-left: 2px solid white;
 }
 
+@media screen and (min-width: 720px) {
+  .explorer-toggle-btn {
+    display: none;
+  }
+}
 .explorer-item {
-  background: #fff;
-  border-radius: 5px;
-  margin: 5px;
-  padding: 5px;
+  background: var(--paper);
+  border-radius: 0.3rem;
+  margin: 0.3rem;
+  padding: 0.3rem;
   position: relative;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 2px 2px 0.3rem rgba(0, 0, 0, 0.05);
 }
 
 .explorer-item:hover {
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 0 0.125rem var(--secondary);
 }
-.selected {
-  background: lightgray;
+
+.explorer-item.selected {
+  box-shadow: inset 0.2rem 0 0 0 var(--yellow) !important;
 }
 
 .explorer-item h4 {
-  margin: 0 0 10px 0;
+  margin: 0 0 0.625rem 0;
   font-size: 0.9em;
   color: var(--primary);
 }
@@ -104,7 +117,7 @@ header a {
 .explorer-item .action {
   cursor: pointer;
   color: #333;
-  margin: 10px;
+  margin: 0.625rem;
 }
 
 .explorer-container {
@@ -113,7 +126,7 @@ header a {
   overflow: hidden;
   min-height: 50px;
   max-height: 300px;
-  padding: 5px;
+  padding: 0.3rem;
 }
 
 .explorer-list {
@@ -121,10 +134,10 @@ header a {
 }
 
 .explorer-heading {
-  background: var(--primary);
+  background: var(--secondary);
   color: white;
-  padding-left: 5px;
-  border-radius: 5px;
+  padding-left: 0.3rem;
+  border-radius: 0.3rem;
   min-height: 40px;
   margin: 2px;
 }
@@ -132,8 +145,8 @@ header a {
 .song-space {
   min-height: 400px;
   height: auto;
-  margin: 5px;
-  padding-left: 10px;
+  /* margin: 0.4rem; */
+  padding: 0.3rem;
 }
 
 /* new song form */
@@ -142,35 +155,53 @@ input {
   display: block;
 }
 input {
-  padding: 5px;
-  margin-top: 5px;
-  margin-bottom: 10px;
+  padding: 0.3rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.625rem;
   width: 90%;
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
 }
+
+/*
 button {
-  background: var(--primary);
+  background: var(--secondary);
   border: 0;
   color: #fff;
-  padding: 10px;
+  padding: 0.625rem;
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer;
 }
+*/
 
-.save-button {
+button:hover {
+  color: var(--primary);
   background: var(--yellow);
+  transition: color 0.2s, border 0.2s, background 0.2s;
+}
+
+.login-button {
+  background: var(--primary);
+  color: var(--paper);
 }
 
 .disabled-button {
   background: var(--disabled);
 }
 
+.save-recording-button {
+  padding-top: 0.4rem;
+  cursor: pointer;
+  :hover {
+    background-color: var(--paper);
+  }
+}
+
 form {
   background: #fff;
-  padding: 15px;
+  padding: 0.625rem;
   width: 250px;
   max-width: 100%;
   max-height: 100%;
@@ -181,15 +212,15 @@ form p {
 }
 form h4 {
   font-size: 1.1em;
-  margin: 10px 0px;
+  margin: 0.625rem 0px;
 }
 div.error {
-  padding: 5px;
+  padding: 0.3rem;
   background: #ffefef;
   border: 1px solid var(--error);
   color: var(--error);
   border-radius: 4px;
-  margin: 5px 0;
+  margin: 0.3rem 0;
 }
 
 /* navbar */
@@ -199,28 +230,42 @@ nav {
 }
 
 nav a {
-  margin-left: 10px;
+  margin-left: 0.625rem;
 }
-nav button {
-  background: #fff;
+
+nav a:hover {
+  color: var(--paper);
+  transition: color 0.2s;
+}
+
+button {
+  background: var(--paper);
   color: var(--primary);
-  border: 2px solid var(--primary);
-  padding: 6px 10px;
+  /* border: 2px solid var(--primary); */
+  padding: 6px 0.625rem;
   border-radius: 4px;
   font-family: "Poppins";
   cursor: pointer;
   font-size: 1em;
-  margin-left: 10px;
+  /* margin-left: 0.625rem; */
 }
+
+.nav-username {
+  padding-left: 0.625rem;
+}
+
 /* auth forms */
 form.signup,
 form.login {
   max-width: 500px;
   margin: 40px auto;
   padding: 20px;
-  background: #fff;
-  border-radius: 4px;
+  background: var(--secondary);
+  border-radius: 0.5rem;
   border: solid 2px var(--primary);
+}
+form.login input[type="text"] {
+  background-color: #92918d;
 }
 
 /* Tooltip container */
@@ -234,10 +279,10 @@ form.login {
   visibility: hidden;
   width: 80px;
   background-color: black;
-  color: #fff;
+  color: var(--paper);
   text-align: center;
   font-size: 0.5em;
-  padding: 5px 0;
+  padding: 0.3rem 0;
   border-radius: 6px;
   opacity: 0.7;
 
@@ -265,14 +310,14 @@ form.login {
   left: 50%;
   transform: translate(-50%, -50%);
   border: solid 2px var(--primary);
-  border-radius: 5px;
+  border-radius: 0.3rem;
   color: var(--primary);
 }
 
 .closebtn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0.625rem;
+  right: 0.625rem;
   font-size: 16px;
   margin-left: 50px;
 }
@@ -294,29 +339,57 @@ form.login {
 .ql-container.ql-snow {
   height: auto;
 }
+
 .ql-editor {
   height: 65vh;
   max-height: 500px;
   overflow-y: scroll;
+  font-family: "Poppins", sans-serif !important;
+  background: var(--secondary);
+}
+
+.ql-toolbar.ql-snow span * {
+  font-family: "Poppins", sans-serif;
+  color: var(--paper);
+  background: var(--primary);
+}
+.ql-toolbar.ql-snow span button svg * {
+  stroke: var(--paper) !important;
+}
+.ql-toolbar.ql-snow {
+  border-radius: 0.3rem 0.3rem 0rem 0rem;
+}
+
+.ql-container.ql-snow {
+  border-radius: 0rem 0rem 0.3rem 0.3rem;
+  padding: 0.3rem;
+}
+
+span.ql-active {
+  color: var(--paper) !important;
+  svg polygon {
+    fill: var(--paper) !important;
+    stroke: var(--paper) !important;
+  }
 }
 
 /*Recorder*/
 .audio-section-container {
-  height: 270px;
-  border-top: solid 2px white;
-  padding-left: 5px;
+  height: auto;
+  border-top: solid 2px var(--secondary);
+  padding-left: 0.3rem;
 }
 
 .recorder-controls-container {
-  width: auto;
-  max-width: 450px;
+  max-width: 470px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-  border: solid 1px var(--primary);
-  border-radius: 5px;
-  background-color: #f1f3f4;
-  padding: 12.5px 5px 12.5px 15px;
+  gap: 0.625rem;
+  border: solid 1px var(--paper);
+  border-radius: 0.3rem;
+  background-color: var(--secondary);
+  padding: 0.625rem;
 }
 
 .audioplayer {
@@ -324,11 +397,11 @@ form.login {
   max-width: 370px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border: solid 1px var(--primary);
-  border-radius: 5px;
+  gap: 0.625rem;
+  border: solid 1px var(--paper);
+  border-radius: 0.3rem;
   background-color: #f1f3f4;
-  padding: 5px 20px 5px 0px;
+  padding: 0.3rem 20px 0.3rem 0px;
 }
 
 .recorder-timer {
@@ -336,37 +409,158 @@ form.login {
 }
 
 #stopRecording,
-#startRecording {
+#startRecording,
+#saveRecording {
   cursor: pointer;
-  padding-top: 7px;
+  padding-top: 0.4rem;
 }
 #startRecording {
   color: red;
-  padding-top: 5px;
+  padding-top: 0.3rem;
 }
 
 #stopRecording {
   color: black;
 }
 #startRecording:hover,
-#stopRecording:hover {
-  background-color: #ddd;
-  border-radius: 5px;
+#stopRecording:hover,
+#saveRecording:hover {
+  background-color: var(--paper);
+  border-radius: 0.3rem;
 }
 
-@media screen and (max-width: 720px) {
-  .home {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr, 1fr;
-    transition: 1s;
+/* Desktop layout */
+@media screen and (min-width: 1024px) {
+  body {
+    align-items: center;
   }
-  header .container {
+  .home {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1px;
+  }
+  .song-space {
+    display: flex;
     flex-direction: column;
   }
-  .ql-editor {
-    height: 280px;
-  }
-  .editor-container {
-    height: auto;
+  .explorer {
+    border-left: 2px solid var(--secondary);
   }
 }
+
+/* Tablet layout */
+@media screen and (min-width: 720px) and (max-width: 1023px) {
+  .home {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .song-space,
+  .explorer {
+    width: 100%;
+    min-width: 0;
+    border-left: none;
+  }
+  .explorer-container,
+  .editor-container,
+  .audio-section-container {
+    width: 90%;
+    max-width: 100%;
+    margin: auto 0.625rem auto;
+  }
+}
+
+/* Mobile layout */
+@media screen and (max-width: 719px) {
+  .home {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 100vw;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    position: relative;
+  }
+  .song-space {
+    width: 100vw;
+    min-width: 0;
+    border-left: none;
+  }
+  .explorer {
+    position: fixed;
+    top: 8rem; /* Adjust based on your header height */
+    right: 0;
+    width: 92vw; /* Explorer takes 80% of screen when open */
+    height: calc(100vh - 60px);
+    padding: 0.3rem;
+    background: var(--primary);
+    border: 1px solid var(--paper);
+    border-radius: 0.3rem;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(calc(100%)); /* Hidden but 40px button visible */
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .explorer.explorer-visible {
+    transform: translateX(0); /* Fully visible */
+  }
+
+  .explorer-toggle-btn {
+    position: fixed;
+    right: 0;
+    top: 17%;
+    transform: translateY(-50%);
+    background: var(--secondary);
+    color: var(--paper);
+    border: 2px solid var(--paper);
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    padding: 12px 4px;
+    cursor: pointer;
+    z-index: 101;
+    display: flex !important; /* Add !important to override the display: none */
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2.5rem;
+  }
+
+  .explorer-toggle-btn:hover {
+    background: var(--yellow);
+    color: var(--primary);
+  }
+
+  .audio-section-container {
+    width: 97vw;
+    max-width: 97vw;
+    padding: 0 0 0.3rem 0;
+    border-radius: 0.1rem;
+  }
+
+  .explorer-container {
+    width: 100%;
+    max-width: 97vw;
+    padding: 0 0 0.3rem 0;
+  }
+
+  .editor-container {
+    max-width: 96vw;
+    margin: 0 0 8px 0;
+  }
+
+  .audio-section-container {
+    padding-left: 2%;
+  }
+
+  .recorder-controls-container,
+  .audioplayer {
+    max-width: 93vw;
+    width: 93vw;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 0.3rem;
+  }
+}
+
+/* ...existing code... */

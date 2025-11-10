@@ -8,6 +8,11 @@ import Metronome from "./Metronome/Metronome";
 import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 import DownloadIcon from "@mui/icons-material/Download";
+import SaveIcon from "@mui/icons-material/Save";
+import { amber } from "@mui/material/colors";
+import { createTheme } from "@mui/material/styles";
+
+const amberA400 = amber["A400"];
 
 const AudioRecorder = () => {
   //set state variables
@@ -234,14 +239,15 @@ const AudioRecorder = () => {
           {`${Math.floor(count / 60)}`.padStart(2, 0)}:
           {`${count % 60}`.padStart(2, 0)}
         </span>
-        <button
+        <span
           id="saveRecording"
-          className="save-button"
+          className="save-recording-button"
           onClick={handleSave}
           disabled={isSaving || !audioBlob}
         >
-          {isSaving ? "Saving..." : "Save"}
-        </button>
+          {isSaving ? "Saving..." : <SaveIcon sx={{ color: "#ffc400" }} />}
+        </span>
+
         <span>|</span>
         <Metronome />
       </div>

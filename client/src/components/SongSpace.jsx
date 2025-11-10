@@ -10,7 +10,7 @@ const SongSpace = () => {
 
   //set variables
   const { openSong } = useContext(OpenSongContext);
-  const welcomeMessage =  "Welcome to your dashboard - Let's write a hit!"; 
+  const welcomeMessage = "Welcome to your dashboard - Let's write a hit!";
 
   useEffect(() => {
     //console.log(openSong);
@@ -21,13 +21,11 @@ const SongSpace = () => {
 
   return (
     <div className="song-space">
-      <h3>
-        Song Title:
-        {openSongTitle && <span className="smaller"> {openSongTitle}</span>}
-      </h3>
+      <h2 className="song-header">
+        {openSongTitle && <span> {openSongTitle}</span>}
+      </h2>
       <Toast display={true} message={welcomeMessage} />
       <DocumentEditor />
-      <AudioRecorder />
     </div>
   );
 };
