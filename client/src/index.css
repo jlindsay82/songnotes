@@ -164,22 +164,13 @@ input {
   box-sizing: border-box;
 }
 
-/*
-button {
-  background: var(--secondary);
-  border: 0;
-  color: #fff;
-  padding: 0.625rem;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-}
-*/
-
 button:hover {
   color: var(--primary);
   background: var(--yellow);
-  transition: color 0.2s, border 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    border 0.2s,
+    background 0.2s;
 }
 
 .login-button {
@@ -488,10 +479,10 @@ span.ql-active {
   }
   .explorer {
     position: fixed;
-    top: 8rem; /* Adjust based on your header height */
+    top: 2rem; /* Adjust based on your header height */
     right: 0;
-    width: 92vw; /* Explorer takes 80% of screen when open */
-    height: calc(100vh - 60px);
+    width: 80vw; /* Explorer takes 80% of screen when open */
+    height: calc(100vh - 8rem);
     padding: 0.3rem;
     background: var(--primary);
     border: 1px solid var(--paper);

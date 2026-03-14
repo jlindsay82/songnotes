@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import "./styles/message.css";
 
 const Message = ({ message }) => {
@@ -19,6 +20,10 @@ const Message = ({ message }) => {
       <p>{customMessage}</p>
     </div>
   );
+};
+
+Message.propTypes = {
+  message: PropTypes.string,
 };
 
 export default Message;
