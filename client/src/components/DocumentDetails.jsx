@@ -12,6 +12,7 @@ import FileOpenIcon from "@mui/icons-material/FileOpen";
 const DocumentDetails = ({ document, selected }) => {
   //set state variables
   const [displayDocumentUpdate, setDisplayDocumentUpdate] = useState(false);
+  const [openDocumentId, setOpenDocumentId] = useState("");
 
   // set contexts
   const { dispatch: documentDispatch } = useDocumentsContext();
@@ -41,6 +42,7 @@ const DocumentDetails = ({ document, selected }) => {
     if (response.ok) {
       //console.log("document selected:", json);
       editorDispatch({ type: "SET_EDITOR", payload: json });
+      setOpenDocumentId(json._id);
     }
   };
 

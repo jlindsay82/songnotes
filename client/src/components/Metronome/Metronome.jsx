@@ -1,20 +1,98 @@
 import { useState, useRef, useEffect } from "react";
 import "./metronome.css";
 
-const audio1 = new Audio("./samples/click1-high.wav");
-const audio2 = new Audio("./samples/click1-low.wav");
 const minBpm = 10;
 const maxBpm = 240;
 
 // ...existing code...
 
 const Metronome = () => {
-  const timerIdRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const clickBufferRef = useRef(null);
+  const nextNoteTimeRef = useRef(0);
+  const schedulerIdRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(120);
 
+  // Initialize AudioContext and load audio file
   useEffect(() => {
-    if (isPlaying) {
+    const initAudio = async () => {
+      // Create AudioContext
+      audioContextRef.current = new (
+        window.AudioContext || window.webkitAudioContext
+      )();
+
+      try {
+        // Fetch and decode the click sound
+        const response = await fetch("./samples/click1-low.wav");
+        const arrayBuffer = await response.arrayBuffer();
+        clickBufferRef.current =
+          await audioContextRef.current.decodeAudioData(arrayBuffer);
+        console.log("Metronome audio loaded successfully");
+      } catch (error) {
+        console.error("Error loading metronome audio:", error);
+      }
+    };
+
+    initAudio();
+
+    // Cleanup on unmount
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const scheduleAheadTime = 0.1; // How far ahead to schedule (100ms)
+    const scheduleInterval = 25; // How often to check (25ms)
+
+    // Play a single click at a specific time
+    const scheduleNote = (time) => {
+      if (!audioContextRef.current || !clickBufferRef.current) return;
+
+      const source = audioContextRef.current.createBufferSource();
+      source.buffer = clickBufferRef.current;
+      source.connect(audioContextRef.current.destination);
+      source.start(time); // Start at precise audio context time
+    };
+
+    // Look ahead and schedule notes that need to play soon
+    const scheduler = () => {
+      if (!audioContextRef.current) return;
+
+      const currentTime = audioContextRef.current.currentTime;
+      const secondsPerBeat = 60.0 / bpm;
+
+      // Schedule all notes that will play in the next 100ms
+      while (nextNoteTimeRef.current < currentTime + scheduleAheadTime) {
+        scheduleNote(nextNoteTimeRef.current);
+        nextNoteTimeRef.current += secondsPerBeat;
+      }
+
+      // Check again in 25ms
+      schedulerIdRef.current = setTimeout(scheduler, scheduleInterval);
+    };
+
+    const start = () => {
+      if (!audioContextRef.current) return;
+
+      // Initialize the next note time to now
+      nextNoteTimeRef.current = audioContextRef.current.currentTime;
+      scheduler(); // Start the scheduler
+      console.log(`Metronome is playing at ${bpm} BPM`);
+    };
+
+    const stop = () => {
+      if (schedulerIdRef.current) {
+        clearTimeout(schedulerIdRef.current);
+        schedulerIdRef.current = null;
+      }
+      console.log("Metronome has stopped");
+    };
+
+    if (isPlaying && bpm > 0) {
       start();
       return () => stop();
     } else {
@@ -24,23 +102,6 @@ const Metronome = () => {
 
   const handleStartStop = () => {
     setIsPlaying((prev) => !prev);
-  };
-
-  const start = () => {
-    const interval = 60000 / bpm;
-    timerIdRef.current = setInterval(() => {
-      audio2.pause();
-      audio2.currentTime = 0;
-      audio2.play().catch((e) => {
-        console.log(`Error playing audio: ${e}`);
-      });
-    }, interval);
-    console.log(`Metronome is playing at ${bpm} BPM`);
-  };
-
-  const stop = () => {
-    clearInterval(timerIdRef.current);
-    console.log("Metronome has stopped");
   };
 
   const handleBpmChange = (e) => {
