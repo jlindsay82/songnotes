@@ -6,10 +6,25 @@ const { BlobServiceClient } = require("@azure/storage-blob");
 const CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
 const CONTAINER_NAME = process.env.AZURE_STORAGE_CONTAINER_NAME || "recordings";
 
-// Initialize Azure Blob Service Client
-const blobServiceClient =
-  BlobServiceClient.fromConnectionString(CONNECTION_STRING);
-const containerClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
+// Lazy initialization of Azure Blob Storage client
+let blobServiceClient = null;
+let containerClient = null;
+
+function getContainerClient() {
+  if (!CONNECTION_STRING) {
+    throw new Error(
+      "Azure Storage connection string is not configured. Please set AZURE_STORAGE_CONNECTION_STRING environment variable.",
+    );
+  }
+
+  if (!containerClient) {
+    blobServiceClient =
+      BlobServiceClient.fromConnectionString(CONNECTION_STRING);
+    containerClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
+  }
+
+  return containerClient;
+}
 
 // get all recordings
 const getRecordings = async (req, res) => {
@@ -51,17 +66,17 @@ const createRecording = async (req, res) => {
     // Check if a file was uploaded
     if (req.file) {
       // Generate unique blob name
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
       const blobName = `${song_id}/${uniqueSuffix}.webm`;
 
       // Get blob client
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const blockBlobClient = getContainerClient().getBlockBlobClient(blobName);
 
       // Upload buffer to Azure
       await blockBlobClient.upload(req.file.buffer, req.file.buffer.length, {
         blobHTTPHeaders: {
-          blobContentType: req.file.mimetype
-        }
+          blobContentType: req.file.mimetype,
+        },
       });
 
       blobUrl = blockBlobClient.url;
@@ -106,9 +121,9 @@ const deleteRecording = async (req, res) => {
     try {
       // Extract blob name from URL
       const url = new URL(recording.filePath);
-      const blobName = url.pathname.split('/').slice(2).join('/'); // Remove container name from path
+      const blobName = url.pathname.split("/").slice(2).join("/"); // Remove container name from path
 
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const blockBlobClient = getContainerClient().getBlockBlobClient(blobName);
       await blockBlobClient.deleteIfExists();
 
       console.log("Deleted Azure blob: ", blobName);
@@ -140,17 +155,22 @@ const serveAudioFile = async (req, res) => {
       return res.status(404).json({ error: "Audio file not found" });
     }
 
-    console.log("Serving audio for recording:", recording._id, "filePath:", recording.filePath);
+    console.log(
+      "Serving audio for recording:",
+      recording._id,
+      "filePath:",
+      recording.filePath,
+    );
 
     // Check if filePath is an Azure URL
     let blobName;
-    if (recording.filePath.startsWith('http')) {
+    if (recording.filePath.startsWith("http")) {
       // Extract blob name from Azure URL
       // URL format: https://<account>.blob.core.windows.net/<container>/<blobName>
       const url = new URL(recording.filePath);
-      const pathParts = url.pathname.split('/').filter(p => p); // Remove empty strings
+      const pathParts = url.pathname.split("/").filter((p) => p); // Remove empty strings
       // First part is container name, rest is blob name
-      blobName = pathParts.slice(1).join('/');
+      blobName = pathParts.slice(1).join("/");
     } else {
       // Legacy local file path - not supported anymore
       console.error("Legacy local file path detected:", recording.filePath);
@@ -159,7 +179,7 @@ const serveAudioFile = async (req, res) => {
 
     console.log("Extracted blob name:", blobName);
 
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const blockBlobClient = getContainerClient().getBlockBlobClient(blobName);
 
     // Check if blob exists
     const exists = await blockBlobClient.exists();
