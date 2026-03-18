@@ -21,19 +21,31 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
-      - name: npm install, build, and test
+      - name: Install and build client
+        working-directory: ./client
         run: |
           npm install
           npm run build --if-present
-          npm run test --if-present
-      
+
+      - name: Install server dependencies
+        working-directory: ./server
+        run: |
+          npm install
+
+      - name: Prepare deployment package
+        run: |
+          # Copy server files to deployment directory
+          xcopy /E /I /Y server deploy\server
+          # Copy built client to server's public directory
+          xcopy /E /I /Y client\dist deploy\server\public
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: deploy/server
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,7 +59,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -55,11 +67,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7F6F0523239140F5804D5383D6EAE38F }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_55D1DCEA9CEE4D438179B6693C88B2A9 }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: "Deploy to Azure Web App"
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'songnotes-app'
-          slot-name: 'Production'
+          app-name: "songnotes-app"
+          slot-name: "Production"
           package: .
-          
