@@ -10,8 +10,7 @@ import NotFound from "./pages/NotFound";
 
 function App() {
   const { user } = useAuthContext();
-  if (user) {
-  }
+
   return (
     <>
       <BrowserRouter>
@@ -27,10 +26,7 @@ function App() {
               path="/signup"
               element={!user ? <Signup /> : <Navigate to="/" />}
             />
-              <Route
-              path="*"
-              element={<NotFound />}
-            />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </BrowserRouter>

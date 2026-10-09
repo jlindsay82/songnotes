@@ -1,24 +1,20 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { useRecordingsContext } from "../hooks/useRecordingsContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { OpenSongContext } from "../context/OpenSongContext";
 import { config } from "../constants";
 import Metronome from "./Metronome/Metronome";
+import { getCurrentDateString } from "../utils/utils";
 
 import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 import DownloadIcon from "@mui/icons-material/Download";
 import SaveIcon from "@mui/icons-material/Save";
-import { amber } from "@mui/material/colors";
-import { createTheme } from "@mui/material/styles";
-
-const amberA400 = amber["A400"];
 
 const AudioRecorder = () => {
-  //set state variables
+  // State variables
   const [isRecording, setIsRecording] = useState(false);
   const [recordingNumber, setRecordingNumber] = useState(1);
-  const [title, setTitle] = useState("");
   const [audioData, setAudioData] = useState(null);
   const [audioBlob, setAudioBlob] = useState(null);
   const [song_id, setSongId] = useState("");
@@ -26,46 +22,51 @@ const AudioRecorder = () => {
   const [error, setError] = useState(null);
   const [count, setCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
+  const [isRecorderReady, setIsRecorderReady] = useState(false);
 
-  //set contexts
+  // Contexts
   const { user } = useAuthContext();
   const { dispatch } = useRecordingsContext();
   const { openSong } = useContext(OpenSongContext);
 
-  //set variables
-  const fetchURL = config.url;
+  // Refs
+  const audioRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const streamRef = useRef(null);
+  const chunksRef = useRef([]);
+  const timerRef = useRef(null);
+  const audioBlobUrlRef = useRef(null);
 
-  const date = new Date();
-  let day = date.getDate();
-  let month = date.getMonth() + 1;
-  let year = date.getFullYear();
-  let currentDate = `${day}-${month}-${year}`;
-
-  //utility method
-  let timer;
-  const counter = () => {
-    setCount(count + 1);
-  };
-
+  // Update song info when openSong changes
   useEffect(() => {
     if (openSong) {
-      //console.log(openSong);
       setSongId(openSong._id);
       setSongTitle(openSong.title);
     }
   }, [openSong]);
 
-  // use count function every second to display seconds elapsed during recording
+  // Timer effect - increment count every second while recording
   useEffect(() => {
-    if (count) {
-      timer = setTimeout(counter, 1000);
+    if (isRecording) {
+      timerRef.current = setInterval(() => {
+        setCount((prevCount) => prevCount + 1);
+      }, 1000);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
-    return () => clearTimeout(timer);
-  }, [count]);
 
-  //Render mediastream once for each recording re-rendered by an updated recordingNumber state variable
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [isRecording]);
+
+  // Initialize MediaRecorder once on mount
   useEffect(() => {
-    // Get user's microphone stream
     const constraints = {
       audio: {
         channelCount: 1,
@@ -74,86 +75,120 @@ const AudioRecorder = () => {
       video: false,
     };
 
+    let mounted = true;
+
     navigator.mediaDevices
       .getUserMedia(constraints)
-      .then(function (stream) {
-        // set media options
-        let mimeTypeOption = "audio/webm";
+      .then((stream) => {
+        if (!mounted) {
+          // Component unmounted before permission granted
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+
+        streamRef.current = stream;
+
+        const mimeTypeOption = "audio/webm";
         const options = {
           audioBitsPerSecond: 320000,
           mimeType: mimeTypeOption,
         };
 
-        // Create a MediaRecorder instance
-
         const mediaRecorder = new MediaRecorder(stream, options);
-        let chunks = [];
+        mediaRecorderRef.current = mediaRecorder;
+        setIsRecorderReady(true); // Trigger re-render to enable button
 
-        // Event handler when data is available
-        mediaRecorder.ondataavailable = function (e) {
+        mediaRecorder.ondataavailable = (e) => {
           if (e.data.size > 0) {
-            chunks.push(e.data);
+            chunksRef.current.push(e.data);
           }
         };
 
-        // Event handler when recording is stopped
-        mediaRecorder.onstop = function () {
-          // Combine audio chunks into a Blob
-          let blob = new Blob(chunks, { type: "audio/webm" });
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunksRef.current, { type: "audio/webm" });
 
-          // Create a temporary URL for the Blob
+          // Revoke previous blob URL to prevent memory leak
+          if (audioBlobUrlRef.current) {
+            URL.revokeObjectURL(audioBlobUrlRef.current);
+          }
+
           const blobUrl = URL.createObjectURL(blob);
+          audioBlobUrlRef.current = blobUrl;
 
-          // Store both blob and URL
           setAudioBlob(blob);
           setAudioData(blobUrl);
 
-          // Create an audio element
-          const audioElement = document.getElementById("audioControl");
-
-          // Set the source of the audio element to the Blob URL
-          audioElement.src = blobUrl;
-
-          // Play recorded audio back
-          audioElement.controls;
-          if (blobUrl) {
-            audioElement.src = blobUrl;
-            audioElement.setAttribute("controls", true);
-            audioElement.load();
+          if (audioRef.current) {
+            audioRef.current.src = blobUrl;
+            audioRef.current.load();
           }
+
+          // Clear chunks for next recording
+          chunksRef.current = [];
         };
-
-        // Start recording when the user clicks record button
-        document
-          .getElementById("startRecording")
-          .addEventListener("click", function () {
-            setError(null);
-            console.log("handleStart was clicked");
-            mediaRecorder.start();
-            setIsRecording(true);
-            counter();
-          });
-
-        // Stop recording when the user clicks stop button
-        document
-          .getElementById("stopRecording")
-          .addEventListener("click", async function () {
-            console.log("handleStop was clicked");
-            mediaRecorder.stop();
-            setIsRecording(false);
-            setRecordingNumber(recordingNumber + 1);
-            setCount(0);
-            clearTimeout(timer);
-          });
       })
-      .catch(function (err) {
+      .catch((err) => {
         console.error("Error accessing microphone:", err);
+        setError("Unable to access microphone. Please check permissions.");
       });
 
-    return;
-  }, [recordingNumber]);
+    // Cleanup on unmount
+    return () => {
+      mounted = false;
 
-  const handleSave = async () => {
+      // Stop media recorder if recording
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state === "recording"
+      ) {
+        mediaRecorderRef.current.stop();
+      }
+
+      // Stop all media tracks
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+
+      // Revoke blob URL
+      if (audioBlobUrlRef.current) {
+        URL.revokeObjectURL(audioBlobUrlRef.current);
+      }
+
+      // Clear timer
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []); // Only run once on mount
+
+  // Start recording
+  const handleStart = useCallback(() => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "inactive"
+    ) {
+      setError(null);
+      chunksRef.current = [];
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+      setCount(0);
+    }
+  }, []);
+
+  // Stop recording
+  const handleStop = useCallback(() => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "recording"
+    ) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setRecordingNumber((prev) => prev + 1);
+    }
+  }, []);
+
+  // Save recording
+  const handleSave = useCallback(async () => {
     if (!user) {
       setError("You must be logged in.");
       return;
@@ -171,24 +206,21 @@ const AudioRecorder = () => {
     setError(null);
 
     try {
+      const currentDate = getCurrentDateString();
       const title = `${song_title}_${currentDate}_${recordingNumber}`;
       const formData = new FormData();
 
-      // Append the audio blob as a file
       formData.append("audioFile", audioBlob, `${title}.webm`);
       formData.append("title", title);
       formData.append("song_id", song_id);
       formData.append("duration", count);
-
-      // Also keep the blob URL for backward compatibility
       formData.append("data", audioData);
 
-      const response = await fetch(fetchURL + "/api/recordings/user/", {
+      const response = await fetch(`${config.url}/api/recordings/user/`, {
         method: "POST",
         body: formData,
         headers: {
           Authorization: `Bearer ${user.token}`,
-          // Don't set Content-Type header - let browser set it with boundary for FormData
         },
       });
 
@@ -207,46 +239,85 @@ const AudioRecorder = () => {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [
+    user,
+    song_id,
+    audioBlob,
+    song_title,
+    recordingNumber,
+    count,
+    audioData,
+    dispatch,
+  ]);
 
-  // when the user clicks download button
+  // Download recording
   const handleDownload = () => {
-    const audioURL = document.getElementById("audioControl").src;
-    if (audioURL) {
-      console.log("clicked download");
-      let hidden_a = document.createElement("a");
-      hidden_a.href = audioURL;
-      hidden_a.setAttribute(
-        "download",
-        `${song_title}_${currentDate}_${recordingNumber}.wav`
-      );
-      document.body.appendChild(hidden_a);
-      hidden_a.click();
+    if (audioData) {
+      const currentDate = getCurrentDateString();
+      const link = document.createElement("a");
+      link.href = audioData;
+      link.download = `${song_title}_${currentDate}_${recordingNumber}.webm`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
   return (
     <div className="audio-section-container">
-      <h4>Song Recorder{error && <div className="error">{error}</div>}</h4>
+      <h4>
+        Song Recorder
+        {error && <div className="error">{error}</div>}
+      </h4>
       <div className="recorder-controls-container">
-        <div id="startRecording">
+        <button
+          type="button"
+          onClick={handleStart}
+          disabled={isRecording || !isRecorderReady}
+          aria-label="Start recording"
+          style={{
+            background: "none",
+            color: "red",
+            border: "none",
+            cursor: isRecording || !isRecorderReady ? "not-allowed" : "pointer",
+            opacity: isRecording || !isRecorderReady ? 0.5 : 1,
+          }}
+        >
           <MicIcon />
-        </div>
-        <div id="stopRecording">
+        </button>
+        <button
+          type="button"
+          onClick={handleStop}
+          disabled={!isRecording}
+          aria-label="Stop recording"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: !isRecording ? "not-allowed" : "pointer",
+            opacity: !isRecording ? 0.5 : 1,
+          }}
+        >
           <StopIcon />
-        </div>
-        <span className="recorder-timer">
-          {`${Math.floor(count / 60)}`.padStart(2, 0)}:
-          {`${count % 60}`.padStart(2, 0)}
+        </button>
+        <span className="recorder-timer" aria-live="polite">
+          {`${Math.floor(count / 60)}`.padStart(2, "0")}:
+          {`${count % 60}`.padStart(2, "0")}
         </span>
-        <span
-          id="saveRecording"
-          className="save-recording-button"
+        <button
+          type="button"
           onClick={handleSave}
           disabled={isSaving || !audioBlob}
+          aria-label={isSaving ? "Saving..." : "Save recording"}
+          className="save-recording-button"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: isSaving || !audioBlob ? "not-allowed" : "pointer",
+            opacity: isSaving || !audioBlob ? 0.5 : 1,
+          }}
         >
           {isSaving ? "Saving..." : <SaveIcon sx={{ color: "#ffc400" }} />}
-        </span>
+        </button>
 
         <span>|</span>
         <Metronome />
@@ -254,17 +325,25 @@ const AudioRecorder = () => {
       <h4>Song Player</h4>
       <div className="audioplayer">
         <audio
+          ref={audioRef}
           controls
           id="audioControl"
-          title={`${song_title}_${currentDate}_${recordingNumber}`}
-        ></audio>
-        <div
+          title={`${song_title}_${getCurrentDateString()}_${recordingNumber}`}
+        />
+        <button
+          type="button"
           className="action-button"
           onClick={handleDownload}
-          style={{ marginTop: "8px" }}
+          disabled={!audioData}
+          aria-label="Download recording"
+          style={{
+            marginTop: "8px",
+            cursor: !audioData ? "not-allowed" : "pointer",
+            opacity: !audioData ? 0.5 : 1,
+          }}
         >
           <DownloadIcon />
-        </div>
+        </button>
       </div>
     </div>
   );

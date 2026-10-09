@@ -15,7 +15,7 @@ const Login = () => {
     <div className="pages">
       <form className="login" onSubmit={handleSubmit}>
         <h3>Log in</h3>
-        <label htmlFor="email">Email:</label>
+        <label htmlFor="email">Email</label>
         <input
           type="email"
           name="email"
@@ -23,7 +23,7 @@ const Login = () => {
           value={email}
         />
 
-        <label htmlFor="password">Password:</label>
+        <label htmlFor="password">Password</label>
         <input
           type="password"
           name="password"
@@ -33,7 +33,7 @@ const Login = () => {
         <button
           disabled={isLoading}
           className="
-        login-button"
+        submit-button"
         >
           Login
         </button>
