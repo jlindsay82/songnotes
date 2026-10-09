@@ -36,6 +36,7 @@ li {
 
 #root {
   max-width: 1400px;
+  min-width: 250px;
   min-height: 100vh;
   background: var(--primary);
 }
@@ -47,7 +48,7 @@ header {
 
 header .container {
   margin: 0;
-  padding: 0px 0.3rem;
+  padding: 0px 0.5rem 0.3rem 0.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -173,7 +174,7 @@ button:hover {
     background 0.2s;
 }
 
-.login-button {
+.submit-button {
   background: var(--primary);
   color: var(--paper);
 }
@@ -440,7 +441,11 @@ span.ql-active {
 }
 
 /* Tablet layout */
-@media screen and (min-width: 720px) and (max-width: 1023px) {
+@media screen and (min-width > 768px) and (max-width: 1023px) {
+  :root {
+    min-width: 100%;
+  }
+
   .home {
     display: flex;
     flex-direction: column;
@@ -462,7 +467,10 @@ span.ql-active {
 }
 
 /* Mobile layout */
-@media screen and (max-width: 719px) {
+@media screen and (max-width: 768px) {
+  :root {
+    min-width: 100%;
+  }
   .home {
     display: flex;
     flex-direction: column;
